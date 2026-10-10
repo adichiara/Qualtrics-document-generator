@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "survey_name": "FY27 MRE IOT&E",
+  "numbering": "sequential",
+  "question_references": {
+    "QID73": "Q1",
+    "QID19789333": "Q2",
+    "QID19789334": "Q3",
+    "QID19789336": "Q4",
+    "QID19789337": "Q5",
+    "QID19789338": "Q6",
+    "QID19789339": "Q7",
+    "QID19789340": "Q8",
+    "QID19789341": "Q9",
+    "QID19789342": "Q10",
+    "QID27": "Q11",
+    "QID6": "Q12",
+    "QID62": "Q13",
+    "QID31": "Q14",
+    "QID32": "Q15",
+    "QID40": "Q16",
+    "QID12": "Q17",
+    "QID33": "Q18",
+    "QID34": "Q19",
+    "QID35": "Q20",
+    "QID36": "Q21",
+    "QID74": "Q22",
+    "QID75": "Q23",
+    "QID29": "Q24",
+    "QID22": "Q25",
+    "QID63": "Q26",
+    "QID13": "Q27",
+    "QID51": "Q28",
+    "QID65": "Q29",
+    "QID19": "Q30",
+    "QID61": "Q31",
+    "QID18": "Q32",
+    "QID16": "Q33",
+    "QID15": "Q34",
+    "QID53": "Q35",
+    "QID54": "Q36",
+    "QID68": "Q37",
+    "QID69": "Q38",
+    "QID57": "Q39",
+    "QID71": "Q40",
+    "QID58": "Q41",
+    "QID72": "Q42",
+    "QID60": "Q43",
+    "QID64": "Q44"
+  },
+  "blocks": [
+    {
+      "block_id": "BL_9NxFUoneTkA8SeG",
+      "title": "Intro",
+      "question_ids": [
+        "QID2",
+        "QID73"
+      ]
+    },
+    {
+      "block_id": "BL_2shNo9bsbOcGKgu",
+      "title": "Demographics ver 5 - Marines",
+      "question_ids": [
+        "QID19789333",
+        "QID19789334",
+        "QID19789336",
+        "QID19789337",
+        "QID19789338",
+        "QID19789339",
+        "QID19789340",
+        "QID19789341",
+        "QID19789342"
+      ]
+    },
+    {
+      "block_id": "BL_bOv6MChtirp8jyK",
+      "title": "Item Ratings",
+      "question_ids": [
+        "QID27",
+        "QID6",
+        "QID62",
+        "QID31",
+        "QID32",
+        "QID40",
+        "QID12",
+        "QID33",
+        "QID34",
+        "QID35",
+        "QID36",
+        "QID74",
+        "QID75"
+      ]
+    },
+    {
+      "block_id": "BL_430S13TI4yUDHF4",
+      "title": "Overall",
+      "question_ids": [
+        "QID29",
+        "QID22",
+        "QID63"
+      ]
+    },
+    {
+      "block_id": "BL_er53x6FWdh7Usuy",
+      "title": "Additional Questions",
+      "question_ids": [
+        "QID13",
+        "QID51",
+        "QID65",
+        "QID19",
+        "QID61",
+        "QID18",
+        "QID16",
+        "QID15"
+      ]
+    },
+    {
+      "block_id": "BL_b8xY5l6d5IrBdMa",
+      "title": "Spoons",
+      "question_ids": [
+        "QID66",
+        "QID53",
+        "QID54",
+        "QID68",
+        "QID69",
+        "QID57",
+        "QID71",
+        "QID58",
+        "QID72",
+        "QID60"
+      ]
+    },
+    {
+      "block_id": "BL_8ivgMORxPzAWbd4",
+      "title": "Additional Comments",
+      "question_ids": [
+        "QID64"
+      ]
+    }
+  ],
+  "instructions": [
+    {
+      "kind": "conditional_skip",
+      "question_id": "QID19789339",
+      "choice_ids": [
+        "455",
+        "456",
+        "457",
+        "458",
+        "459",
+        "460",
+        "461",
+        "462",
+        "463",
+        "464",
+        "465",
+        "466",
+        "467",
+        "468",
+        "469",
+        "470",
+        "471",
+        "472",
+        "473",
+        "474",
+        "475",
+        "476",
+        "477",
+        "478",
+        "479",
+        "480",
+        "481",
+        "482",
+        "483",
+        "484",
+        "485",
+        "486",
+        "487",
+        "488",
+        "489",
+        "490",
+        "491",
+        "492",
+        "493",
+        "494",
+        "495",
+        "496",
+        "497",
+        "498",
+        "499",
+        "500",
+        "501",
+        "502",
+        "503",
+        "504"
+      ],
+      "excluded_choice_ids": [
+        "454"
+      ],
+      "target_question_id": "QID19789341",
+      "block_id": "BL_2shNo9bsbOcGKgu",
+      "skipped_question_ids": [
+        "QID19789340"
+      ],
+      "text": "If you selected anything other than “Less than one year”, skip to Q9."
+    },
+    {
+      "kind": "skip",
+      "question_id": "QID19789341",
+      "choice_id": "2",
+      "choice_label": "No",
+      "text": "Skip the remaining questions in this section.",
+      "target_question_id": null,
+      "block_id": "BL_2shNo9bsbOcGKgu",
+      "skipped_question_ids": [
+        "QID19789342"
+      ]
+    },
+    {
+      "kind": "question_eligibility",
+      "question_id": "QID54",
+      "text": "Answer only if you selected “Yes - CURRENT MRE spoon(s) broke while using” in Q35 or you selected “Yes - LIGHT-TAN spoon(s) spoon(s) broke while using” in Q35 or you selected “Yes - DARK-BROWN spoon(s) spoon(s) broke while using” in Q35."
+    },
+    {
+      "kind": "question_eligibility",
+      "question_id": "QID69",
+      "text": "Answer only if you selected “Yes - CURRENT MRE spoon(s) already damaged prior to use” in Q37 or you selected “Yes - LIGHT-TAN spoon(s) already damaged prior to use” in Q37 or you selected “Yes - DARK-BROWN spoon(s) already damaged prior to use” in Q37."
+    }
+  ],
+  "review_required": [
+    {
+      "scope": "question",
+      "source_id": "QID32",
+      "reason": "Unrecognized condition group type."
+    },
+    {
+      "scope": "question",
+      "source_id": "QID35",
+      "reason": "Unrecognized condition group type."
+    }
+  ]
+}

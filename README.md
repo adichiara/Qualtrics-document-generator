@@ -46,6 +46,7 @@ python qsf_to_paper.py your-survey.qsf --list-questions
 - [Survey-specific configuration](examples/Example_survey_config.json), demonstrating survey numbering, bold prompts, and a QID-specific matrix border style
 - [Qualtrics product survey demo](examples/Demo_product_survey.qsf)
 - [Real fuel handler survey](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey.qsf), with [Word](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey-paper-logic.docx), [PDF](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey-paper-logic.pdf), [survey config](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey_config.json), and [routing/layout evaluation](docs/handwear-evaluation.md)
+- [FY27 MRE survey](examples/FY27_MRE_IOTE.qsf), with default-settings [Word](examples/FY27_MRE_IOTE-paper-logic.docx), [PDF](examples/FY27_MRE_IOTE-paper-logic.pdf), [logic report](examples/FY27_MRE_IOTE-logic.json), and [evaluation of layout and unsupported logic](docs/mre-evaluation.md)
 - [Manually revised layout reference](examples/references/Example_survey-paper_revised.docx), retained as a formatting reference
 
 Generate examples into an ignored local output directory:
