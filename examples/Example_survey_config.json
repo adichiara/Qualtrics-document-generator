@@ -1,0 +1,19 @@
+{
+  "questions": {
+    "numbering": "survey",
+    "bold": true
+  },
+  "question_overrides": {
+    "QID22": {
+      "matrix": {
+        "banded_rows": false,
+        "preferred_row_height_inches": 0.35,
+        "row_bottom_border": {
+          "enabled": true,
+          "weight_pt": 0.75,
+          "color": "#999999"
+        }
+      }
+    }
+  }
+}
