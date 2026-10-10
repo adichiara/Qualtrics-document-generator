@@ -96,6 +96,18 @@ Line spacing values are multiples, such as `1`, `1.15`, or `1.5`. Table paragrap
 
 Matrix banding and matrix row borders are independent: enable either, both, or neither. The `tables` banding/bottom-border settings control other response tables separately. `tables.borders` controls full grid borders for all tables. Handwriting fields retain their write-in rules even when decorative row borders are disabled.
 
+Multiple-choice tables use `responses.indent_inches` (default `0.5`) from the left text margin. Their total width is reduced by the same amount so the right edge stays within the page. Set it to `0` for flush-left tables. This applies to both vertical lists and horizontal rating scales; matrix and form tables stay at the text margin. A dropdown converted to an inline write-in has no response table to indent.
+
+Long multiple-choice lists have automatic row banding by default through `responses.large_list_banded_rows`. “Long” uses the existing `responses.multiple_columns_above` threshold: more than 10 choices by default. Banding applies whether a long list uses one vertical list or several columns, with the color from `tables.band_color`; a horizontal multiple-choice scale above the same threshold is also banded. Set `responses.large_list_banded_rows` to `false` to disable automatic long-list banding; `tables.banded_rows` can still enable general table banding independently. Yes/No choices use vertical lists in automatic layout, including Qualtrics predefined Yes/No scales; an explicit `responses.layout` override still takes priority.
+
+Text-entry FORM tables grow toward `responses.form_preferred_row_height_inches` (default `0.45`) to provide handwriting space. If the compact form fits in the estimated remaining space on the current page, added height is limited to that space. If it already needs a fresh page, growth uses a full-page budget instead. The existing `responses.field_row_height_inches` (`0.34`) remains the minimum and continues to control compact rank and other field tables. Wrapped labels can increase the necessary height. These calculations estimate paragraph wrapping and table heights and reserve room for pagination differences; Word decides the final page placement.
+
+```bash
+python qsf_to_paper.py survey.qsf --set responses.indent_inches=0.5 --set responses.large_list_banded_rows=true --set responses.form_preferred_row_height_inches=0.5
+```
+
+All three settings support main JSON, survey JSON, CLI `--set`, and per-question overrides.
+
 Header rotation accepts `auto`, `always`, or `never`; automatic rotation uses `rotate_at_columns`. Rotated labels are flattened to remove source line breaks, then wrapped only when needed to fit. Turning rotation off on a matrix with many narrow columns may require smaller labels or a wider page.
 
 `null` is allowed only where it appears in the default config. It requests adaptive sizing, such as the matrix statement size, preferred row height, column width, or header height limit. A null question line spacing uses the document's normal spacing.

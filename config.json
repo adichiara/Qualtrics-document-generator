@@ -34,7 +34,10 @@
     "short_label_max_chars": 30,
     "dropdown_write_in_at": 12,
     "row_height_inches": 0.25,
-    "field_row_height_inches": 0.34
+    "field_row_height_inches": 0.34,
+    "form_preferred_row_height_inches": 0.45,
+    "large_list_banded_rows": true,
+    "indent_inches": 0.5
   },
   "tables": {
     "line_spacing": 1,

@@ -69,6 +69,7 @@ python tests/test_configuration.py
 python tests/test_config_layers.py
 python tests/test_logic.py
 python tests/test_logic_document.py
+python tests/test_response_layout.py
 ```
 
 The formatter preserves all non-trash questions it finds, including those absent from survey flow. Question types without a full paper equivalent produce a console warning for manual review. Very large matrices may span pages or become multiple column panels to retain their content.

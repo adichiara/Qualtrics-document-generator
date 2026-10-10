@@ -45,7 +45,9 @@ DEFAULT_CONFIG = {
                   "layout": "auto", "multiple_columns_above": 10,
                   "max_columns": 2, "short_label_max_chars": 30,
                   "dropdown_write_in_at": 12, "row_height_inches": .25,
-                  "field_row_height_inches": .34},
+                  "field_row_height_inches": .34,
+                  "form_preferred_row_height_inches": .45,
+                  "large_list_banded_rows": True, "indent_inches": .5},
     "tables": {"line_spacing": 1, "cell_padding_inches": None,
                "banded_rows": False, "band_color": "#F7F7F7",
                "borders": {"enabled": False, "weight_pt": .5, "color": "#D9D9D9"},
@@ -121,7 +123,7 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
         else:
             if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
                 raise ValueError(f"{name} must be a finite number.")
-            zero_allowed = key.startswith("margin_") or key in {"blank_lines_before", "space_after_pt", "cell_padding_inches", "multiple_columns_above"}
+            zero_allowed = key.startswith("margin_") or key in {"blank_lines_before", "space_after_pt", "cell_padding_inches", "multiple_columns_above", "indent_inches"}
             if value < 0 or (not zero_allowed and value == 0):
                 raise ValueError(f"{name} must be {'nonnegative' if zero_allowed else 'positive'}.")
             integer_keys = {"blank_lines_before", "multiple_columns_above", "max_columns", "short_label_max_chars",
@@ -149,6 +151,8 @@ def validate_resolved(config):
     if p["orientation"] == "landscape": width, height = height, width
     if width - p["margin_left_inches"] - p["margin_right_inches"] < 2 or height - p["margin_top_inches"] - p["margin_bottom_inches"] < 2:
         raise ValueError("Page margins must leave at least 2 inches of printable width and height.")
+    if width - p["margin_left_inches"] - p["margin_right_inches"] - r["indent_inches"] < 1.2:
+        raise ValueError("Response indentation must leave at least 1.2 inches for multiple-choice tables.")
 
 
 def resolve_config(config=None, cli_overrides=None):
@@ -481,10 +485,18 @@ def is_rating_scale(q, labels):
     """Recognize anchored rating scales; nominal choices remain vertical."""
     if len(labels) < 2 or len(labels) > 11 or any(other for _, other in labels):
         return False
+    values = [re.sub(r"[^a-z0-9 ]", "", label.lower()).strip() for label, _ in labels]
+    # Qualtrics stores its predefined Yes/No list as a Likert Autoscale too.
+    # Binary choices are ordinary vertical lists, regardless of that metadata.
+    if {"yes", "no"}.issubset(values):
+        return False
     config = q.get("Configuration", {})
     if isinstance(config, dict) and config.get("Autoscale"):
+        autoscale = config["Autoscale"]
+        yscale = autoscale.get("YScale", {}) if isinstance(autoscale, dict) else {}
+        if isinstance(yscale, dict) and str(yscale.get("Name", "")).lower() == "yesno":
+            return False
         return True
-    values = [re.sub(r"[^a-z0-9 ]", "", label.lower()).strip() for label, _ in labels]
     for family in (("agree",), ("satisfied",), ("useful",), ("comfortable",),
                    ("likely",), ("important",), ("confident",), ("easy", "difficult"),
                    ("acceptable",), ("effective",), ("good", "bad"), ("excellent", "poor")):
@@ -555,7 +567,7 @@ class Writer:
         r = self.settings["responses"]
         return label_size(values, width, bold, r["font_size"], r["minimum_font_size"])
 
-    def decorate_table(self, table, matrix=False):
+    def decorate_table(self, table, matrix=False, banded_rows=None):
         t = self.settings["tables"]
         cfg = self.settings["matrix"] if matrix else t
         padding = cfg["cell_padding_inches"]
@@ -585,7 +597,8 @@ class Writer:
             if matrix and n == 0: continue
             band = n % 2 == 0 if matrix else n % 2 == 1
             for cell in row.cells:
-                if cfg["banded_rows"] and band: shade(cell, cfg["band_color"].lstrip("#"))
+                if (cfg["banded_rows"] if banded_rows is None else banded_rows) and band:
+                    shade(cell, cfg["band_color"].lstrip("#"))
                 border = cfg["row_bottom_border"]
                 if border["enabled"]: bottom_line(cell, border["weight_pt"], border["color"])
 
@@ -618,9 +631,18 @@ class Writer:
             from docx.text.paragraph import Paragraph
             Paragraph(elements[-1], self.doc).paragraph_format.keep_with_next = False
 
-    def response_table(self, widths, rows):
+    def response_table(self, widths, rows, indent_inches=0, banded_rows=None):
         table = self.doc.add_table(rows=rows, cols=len(widths))
         table.autofit = False
+        # Reserve the indentation in the column widths so the right edge still
+        # stays within the printable page. Explicit widths also help LibreOffice.
+        table_width = table._tbl.tblPr.find(qn("w:tblW"))
+        table_width.set(qn("w:w"), str(round(sum(widths) * 1440)))
+        table_width.set(qn("w:type"), "dxa")
+        indent = OxmlElement("w:tblInd")
+        indent.set(qn("w:w"), str(round(indent_inches * 1440)))
+        indent.set(qn("w:type"), "dxa")
+        table._tbl.tblPr.append(indent)
         borders = OxmlElement("w:tblBorders")
         for edge in ("top", "left", "bottom", "right", "insideH", "insideV"):
             border = OxmlElement("w:" + edge)
@@ -638,41 +660,118 @@ class Writer:
                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
                 paragraph_zero(cell.paragraphs[0])
                 cell.paragraphs[0].paragraph_format.line_spacing = self.settings["tables"]["line_spacing"]
-        self.decorate_table(table)
+        self.decorate_table(table, banded_rows=banded_rows)
         return table
 
-    def lines(self, count=None):
-        table = self.response_table([self.width], count or self.text_lines)
+    def lines(self, count=None, indent_inches=0):
+        table = self.response_table([self.width - indent_inches], count or self.text_lines,
+                                    indent_inches=indent_inches)
         for row in table.rows:
             row.height = Inches(self.settings["write_in"]["line_height_inches"])
             if not self.settings["tables"]["row_bottom_border"]["enabled"]:
                 bottom_line(row.cells[0])
 
-    def fields(self, labels, answer_first=False):
+    def remaining_page_height(self, end):
+        """Estimate space before a question; Word remains the layout authority."""
+        from docx.table import Table
+        from docx.text.paragraph import Paragraph
+        sec = self.doc.sections[0]
+        capacity = (sec.page_height - sec.top_margin - sec.bottom_margin) / 914400 * 72
+        used, group = 0, 0
+
+        def paragraph_height(p, width):
+            inherited_size = p.style.font.size or self.doc.styles["Normal"].font.size
+            size = max((r.font.size.pt for r in p.runs if r.font.size is not None),
+                       default=inherited_size.pt if inherited_size is not None else self.base_config["responses"]["font_size"])
+            spacing = p.paragraph_format.line_spacing
+            line = spacing.pt if hasattr(spacing, "pt") else size * (spacing or 1.2)
+            before = p.paragraph_format.space_before
+            after = p.paragraph_format.space_after
+            if before is None: before = p.style.paragraph_format.space_before
+            if after is None: after = p.style.paragraph_format.space_after
+            return estimated_lines(p.text, width, size) * line + (before.pt if before else 0) + (after.pt if after else 0)
+
+        def flush():
+            nonlocal used, group
+            if used + group > capacity:
+                used = group if group <= capacity else group % capacity
+            else:
+                used += group
+            group = 0
+
+        for element in list(self.doc.element.body)[:end]:
+            if element.tag == qn("w:p"):
+                p = Paragraph(element, self.doc)
+                if p.paragraph_format.page_break_before:
+                    flush()
+                    used = 0
+                group += paragraph_height(p, self.width)
+                keep = p.paragraph_format.keep_with_next
+                if keep is None: keep = p.style.paragraph_format.keep_with_next
+            elif element.tag == qn("w:tbl"):
+                table = Table(element, self.doc)
+                for row in table.rows:
+                    height = row.height.pt if row.height is not None else 0
+                    for cell in row.cells:
+                        if cell._tc.get_or_add_tcPr().find(qn("w:textDirection")) is not None:
+                            continue
+                        width = cell.width.inches if cell.width is not None else self.width / len(row.cells)
+                        height = max(height, sum(paragraph_height(p, width) for p in cell.paragraphs))
+                    group += height
+                keep = any(p.paragraph_format.keep_with_next for cell in table.rows[-1].cells for p in cell.paragraphs)
+            else:
+                continue
+            if not keep: flush()
+        flush()
+        return max(0, capacity - used)
+
+    def fields(self, labels, answer_first=False, available_height=None, current_page_height=None):
         labels = [flat(label) for label in labels]
         widths = [.55, self.width - .55] if answer_first else [self.width * 3.4 / 6.9, self.width * 3.5 / 6.9]
         table = self.response_table(widths, len(labels))
         size = self.label_size(labels, widths[1] if answer_first else widths[0])
-        for row, label in zip(table.rows, labels):
+        heights = [self.settings["responses"]["field_row_height_inches"]] * len(labels)
+        if available_height is not None and labels:
+            # Form rows get extra handwriting space only within the height
+            # available to a whole question on one page. Wrapped labels retain
+            # their necessary height; row heights remain minimums, never caps.
+            label_width = widths[1] if answer_first else widths[0]
+            padding = self.settings["tables"]["cell_padding_inches"]
+            padding = .04 if padding is None else padding
+            heights = [max(h, estimated_lines(label, label_width, size) * size *
+                           self.settings["tables"]["line_spacing"] / 72 + 2 * padding)
+                       for h, label in zip(heights, labels)]
+            preferred = self.settings["responses"]["form_preferred_row_height_inches"]
+            growth = [max(0, preferred - h) for h in heights]
+            if current_page_height is not None and sum(heights) * 72 <= current_page_height:
+                available_height = min(available_height, current_page_height)
+            extra = max(0, available_height / 72 - sum(heights))
+            fraction = min(1, extra / sum(growth)) if sum(growth) else 0
+            heights = [h + g * fraction for h, g in zip(heights, growth)]
+        for row, label, height in zip(table.rows, labels, heights):
             answer, text = (row.cells[0], row.cells[1]) if answer_first else (row.cells[1], row.cells[0])
             self.cell_text(text, label, size=size)
             text.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             text.paragraphs[0].paragraph_format.space_after = Pt(0)
             if not self.settings["tables"]["row_bottom_border"]["enabled"]:
                 bottom_line(answer)
-            row.height = Inches(self.settings["responses"]["field_row_height_inches"])
+            row.height = Inches(height)
 
     def options(self, choices, multiple=False, rating=False):
         choices = [(flat(label), other) for label, other in choices]
         cfg = self.settings["responses"]
+        indent = cfg["indent_inches"]
+        width = self.width - indent
         mark = cfg["multiple_mark"] if multiple else cfg["single_mark"]
         if cfg["layout"] != "auto": rating = cfg["layout"] == "horizontal" and not any(other for _, other in choices)
         if not choices:
-            self.lines(1)
+            self.lines(1, indent_inches=indent)
             return
+        banded = True if len(choices) > cfg["multiple_columns_above"] and cfg["large_list_banded_rows"] else None
         if rating:
-            table = self.response_table([self.width / len(choices)] * len(choices), 2)
-            size = self.label_size([label for label, _ in choices], self.width / len(choices))
+            table = self.response_table([width / len(choices)] * len(choices), 2,
+                                        indent_inches=indent, banded_rows=banded)
+            size = self.label_size([label for label, _ in choices], width / len(choices))
             for i, (label, _) in enumerate(choices):
                 self.cell_text(table.cell(0, i), label, size=size)
                 self.cell_text(table.cell(1, i), mark, size=cfg["symbol_size"])
@@ -686,14 +785,14 @@ class Writer:
         # Use two vertical columns only for long lists of short, plain labels.
         split = count > cfg["multiple_columns_above"] and max_length <= cfg["short_label_max_chars"] and not any(other or "\n" in label for label, other in choices)
         groups = min(cfg["max_columns"], max(1, math.ceil(count / max(1, cfg["multiple_columns_above"])))) if split else 1
-        groups = min(groups, max(1, int(self.width / 1.2)))
+        groups = min(groups, max(1, int(width / 1.2)))
         rows = math.ceil(count / groups)
-        label_width = (self.width - (groups - 1) * .4) / groups - .3
+        label_width = (width - (groups - 1) * .4) / groups - .3
         widths = []
         for group in range(groups):
             if group: widths.append(.4)
             widths.extend([.3, label_width])
-        table = self.response_table(widths, rows)
+        table = self.response_table(widths, rows, indent_inches=indent, banded_rows=banded)
         size = self.label_size([label for label, _ in choices], widths[1])
         for i, (label, other) in enumerate(choices):
             group, row = divmod(i, rows)
@@ -968,23 +1067,24 @@ class Writer:
             run.font.name = font["family"]
             run.font.size = Pt(cfg["font_size"])
         labels = [(clean(c), other_size(c)) for _, c in choices]
+        sec = self.doc.sections[0]
+        page_height = (sec.page_height - sec.top_margin - sec.bottom_margin) / 914400 * 72
+        prompt_height = estimated_lines((str(tag) + '. ' if cfg["numbering"] != "off" else '') + prompt, self.width, cfg["font_size"]) * cfg["font_size"] * (cfg["line_spacing"] or 1.25) + cfg["space_after_pt"]
+        # A conservative full-page budget: Word handles the final placement of
+        # the kept-together question within the current or next page.
+        response_budget = page_height - cfg["blank_lines_before"] * cfg["font_size"] - prompt_height - 48
         if short_write_in:
             pass
         elif qtype == "MC":
             if selector == "DL" and len(labels) >= response["dropdown_write_in_at"]:
-                self.lines(1)
+                self.lines(1, indent_inches=response["indent_inches"])
             else:
                 self.options(labels, selector.startswith("MA"),
                              rating=not selector.startswith("MA") and is_rating_scale(q, labels))
         elif qtype == "Matrix":
             multiple = selector.startswith("MA") or q.get("SubSelector") in {"MultipleAnswer", "MultiAnswer"}
-            sec = self.doc.sections[0]
-            page_height = (sec.page_height - sec.top_margin - sec.bottom_margin) / 914400 * 72
-            prompt_height = estimated_lines((str(tag) + '. ' if cfg["numbering"] != "off" else '') + prompt, self.width, cfg["font_size"]) * cfg["font_size"] * (cfg["line_spacing"] or 1.25) + cfg["space_after_pt"]
-            # Reserve room for pagination differences between Word renderers.
-            matrix_budget = page_height - cfg["blank_lines_before"] * cfg["font_size"] - prompt_height - 48
             self.grid([x for x, _ in labels], [clean(a) for _, a in answers], multiple,
-                      available_height=matrix_budget)
+                      available_height=response_budget)
             # Word's keep-with-next behavior varies around large tables.
             # Explicitly start large matrix questions on a fresh page, above
             # their two blank lines and prompt rather than between prompt/table.
@@ -997,7 +1097,10 @@ class Writer:
                 first_gap.paragraph_format.page_break_before = True
         elif qtype == "TE":
             if selector == "FORM" and choices:
-                self.fields([label for label, _ in labels])
+                remaining = self.remaining_page_height(start) if not start_new_page else page_height
+                current_budget = remaining - cfg["blank_lines_before"] * cfg["font_size"] - prompt_height - 24
+                self.fields([label for label, _ in labels], available_height=response_budget,
+                            current_page_height=current_budget)
             else:
                 self.lines(self.text_entry_lines(q, selector))
         elif qtype in {"RankOrder", "RO"}:

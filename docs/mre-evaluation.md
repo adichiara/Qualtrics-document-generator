@@ -1,6 +1,14 @@
 # FY27 MRE survey evaluation
 
-Evaluated 2026-10-10 as an unchanged-code baseline using the uploaded QSF, the main `config.json`, and the separate logic adapter. No survey-specific overrides or manual Word/PDF edits were applied. The Python scripts and configuration files are unchanged.
+Initially evaluated 2026-10-10 as an unchanged-code baseline using the uploaded QSF, the main `config.json`, and the separate logic adapter. The committed Word/PDF files were subsequently refreshed with the requested formatting improvements below. No survey-specific overrides or manual Word/PDF edits were applied. The source QSF and logic modules remain unchanged.
+
+## Formatting update
+
+Yes/No questions now use vertical lists even when Qualtrics describes them as a predefined Likert Autoscale. All multiple-choice response tables are indented 0.5 inch from the left text margin, with their widths reduced to stay inside the right margin. Lists with more than 10 choices receive light alternating row bands by default. These settings can be adjusted globally or by QID.
+
+Text-entry FORM rows now aim for 0.45 inch rather than 0.34 inch, with growth limited by estimated page space. Q17 and Q21 have taller write-in rows; Q23 gets a smaller increase so it still shares page 14 with Q22. Rank fields retain their compact height. Page-space calculations are estimates; Word controls final pagination.
+
+The refreshed PDF still has 24 pages, all 44 questions, and all 11 matrices on single pages. The changed page images were visually reviewed; unchanged pages were compared byte-for-byte with the previously reviewed render. The configuration, config-layer, logic, adapter, and response-layout checks pass.
 
 ## Output and layout
 
@@ -37,7 +45,7 @@ Individual choices or matrix statements also have display conditions in seven qu
 | Q19, other items tried | QID34 | 13 of 14 choices |
 | Q20, other item ratings | QID35 | 13 of 13 statements |
 
-The online form uses these conditions to show items appropriate to prior menu/item selections. Printing every item preserves content, but does not reproduce that filtering. The existing N/A instructions help with ratings; they do not fully replace the filtering for “other items” checklists. This baseline needs those paper instructions resolved before being treated as logic-equivalent to the online survey.
+The online form uses these conditions to show items appropriate to prior menu/item selections. Printing every item preserves content, but does not reproduce that filtering. The existing N/A instructions help with ratings; they do not fully replace the filtering for “other items” checklists. Individual choice and matrix-row display logic is intentionally outside the agreed generator scope; any desired paper-specific wording or special handling remains a manual edit.
 
 ## Reproduce
 
