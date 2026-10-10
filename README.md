@@ -42,6 +42,7 @@ python qsf_to_paper.py your-survey.qsf --list-questions
 
 - [Example survey QSF](examples/Example_survey.qsf)
 - [Example Word document](examples/Example_survey-paper.docx) and [PDF](examples/Example_survey-paper.pdf), using the default print layout
+- [Example with respondent logic in Word](examples/Example_survey-paper-logic.docx) and [PDF](examples/Example_survey-paper-logic.pdf), with the analyzer's years-of-service skip direction added to a separate generated copy; [analysis report](examples/Example_survey-logic.json)
 - [Survey-specific configuration](examples/Example_survey_config.json), demonstrating survey numbering, bold prompts, and a QID-specific matrix border style
 - [Qualtrics product survey demo](examples/Demo_product_survey.qsf)
 - [Manually revised layout reference](examples/references/Example_survey-paper_revised.docx), retained as a formatting reference

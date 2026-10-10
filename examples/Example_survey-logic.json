@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "survey_name": "Example survey",
+  "numbering": "sequential",
+  "question_references": {
+    "QID2": "Q1",
+    "QID6": "Q2",
+    "QID19795623": "Q3",
+    "QID22": "Q4",
+    "QID19795624": "Q5",
+    "QID19795625": "Q6",
+    "QID19795626": "Q7",
+    "QID19795627": "Q8",
+    "QID19795628": "Q9",
+    "QID19795629": "Q10",
+    "QID19795630": "Q11",
+    "QID19795631": "Q12",
+    "QID19795632": "Q13"
+  },
+  "blocks": [
+    {
+      "block_id": "BL_baqbv8WZ5VXIoyq",
+      "title": "Default Question Block",
+      "question_ids": [
+        "QID20",
+        "QID2",
+        "QID6"
+      ]
+    },
+    {
+      "block_id": "BL_b7n9bGMZfLU4v1I",
+      "title": "Operational Assessment of Training Scale (OATS)",
+      "question_ids": [
+        "QID19795623",
+        "QID22"
+      ]
+    },
+    {
+      "block_id": "BL_eCzp0meWkjwUF4G",
+      "title": "Demographics ver 5 - Multiservice",
+      "question_ids": [
+        "QID19795624",
+        "QID19795625",
+        "QID19795626",
+        "QID19795627",
+        "QID19795628",
+        "QID19795629",
+        "QID19795630",
+        "QID19795631",
+        "QID19795632"
+      ]
+    }
+  ],
+  "instructions": [
+    {
+      "kind": "conditional_skip",
+      "question_id": "QID19795631",
+      "choice_ids": [
+        "455",
+        "456",
+        "457",
+        "458",
+        "459",
+        "460",
+        "461",
+        "462",
+        "463",
+        "464",
+        "465",
+        "466",
+        "467",
+        "468",
+        "469",
+        "470",
+        "471",
+        "472",
+        "473",
+        "474",
+        "475",
+        "476",
+        "477",
+        "478",
+        "479",
+        "480",
+        "481",
+        "482",
+        "483",
+        "484",
+        "485",
+        "486",
+        "487",
+        "488",
+        "489",
+        "490",
+        "491",
+        "492",
+        "493",
+        "494",
+        "495",
+        "496",
+        "497",
+        "498",
+        "499",
+        "500",
+        "501",
+        "502",
+        "503",
+        "504"
+      ],
+      "excluded_choice_ids": [
+        "454"
+      ],
+      "target_question_id": null,
+      "block_id": "BL_eCzp0meWkjwUF4G",
+      "skipped_question_ids": [
+        "QID19795632"
+      ],
+      "text": "If you selected anything other than “Less than one year”, skip the remaining questions in this section."
+    }
+  ],
+  "review_required": []
+}
