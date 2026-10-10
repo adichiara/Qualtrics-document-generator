@@ -68,4 +68,11 @@ python tests/test_config_layers.py
 
 The formatter preserves all non-trash questions it finds, including those absent from survey flow. Question types without a full paper equivalent produce a console warning for manual review. Very large matrices may span pages or become multiple column panels to retain their content.
 
-Logic display is planned for a later update and is currently omitted. The script currently generates Word documents; the included PDF is an exported example.
+The Word converter currently omits logic. A separate [respondent logic prototype](docs/logic.md) proposes skip directions for questions and “Answer this section only if…” directions for conditional blocks, without changing the converter:
+
+```bash
+python qsf_logic.py your-survey.qsf -o instructions.json
+python tests/test_logic.py
+```
+
+The script currently generates Word documents; the included PDF is an exported example.
