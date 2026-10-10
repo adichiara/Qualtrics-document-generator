@@ -219,6 +219,60 @@ class LogicTests(unittest.TestCase):
         self.assertEqual(set(item["choice_ids"]), {str(cid) for cid in range(2, 8)})
         self.assertEqual(item["text"], "If you selected anything other than “Yes”, skip to Q3.")
 
+    def test_qsf_conjuction_spelling_and_selection_count(self):
+        expr = condition({"Type": "Expression", "LogicType": "Question", "QuestionID": "QID1",
+                          "LeftOperand": "q://QID1/SelectedChoicesCount", "Operator": "GreaterThanOrEqual",
+                          "RightOperand": "1"})
+        expr["0"]["1"] = dict(choice(cid="2", operator="NotSelected"), Conjuction="And")
+        parsed = logic.parse_condition(expr)
+        self.assertFalse(logic.evaluate(parsed, {"QID1": set()}))
+        self.assertFalse(logic.evaluate(parsed, {"QID1": {"2"}}))
+        self.assertTrue(logic.evaluate(parsed, {"QID1": {"1"}}))
+        self.assertIsNone(logic.evaluate(parsed, {}))
+        self.assertEqual(logic.dependencies(parsed), {"QID1"})
+
+    def test_block_element_skip_and_unsupported_destinations(self):
+        data = fixture()
+        item = data["SurveyElements"][-2]["Payload"][0]["BlockElements"][0]
+        item["SkipLogic"] = [{"ChoiceLocator": "q://QID1/SelectableChoice/2", "Condition": "Selected",
+                              "SkipToDestination": "ENDOFBLOCK"}]
+        report = logic.analyze_survey(data)
+        skip = next(i for i in report["instructions"] if i["kind"] == "skip")
+        self.assertEqual(skip["origin"], "explicit_skip")
+        self.assertEqual(skip["skipped_question_ids"], ["QID2", "QID3", "QID4"])
+        self.assertFalse(report["review_required"])
+        item["SkipLogic"][0]["SkipToDestination"] = "QID4"
+        report = logic.analyze_survey(data)
+        self.assertTrue(report["review_required"])
+        self.assertFalse(any(i["kind"] == "skip" for i in report["instructions"]))
+
+    def test_real_survey_routes_and_source_condition_fidelity(self):
+        path = ROOT / "examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey.qsf"
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+        report = logic.analyze_survey(data)
+        self.assertEqual(len(report["question_references"]), 79)
+        self.assertEqual(len(report["instructions"]), 18)
+        self.assertFalse(report["review_required"])
+        exits = [i for i in report["instructions"] if i.get("origin") == "explicit_skip"]
+        self.assertEqual({i["question_id"] for i in exits}, {"QID13", "QID32"})
+        self.assertEqual(next(i for i in exits if i["question_id"] == "QID13")["target_block_id"], "BL_3Jd1yr9RqqgI8FE")
+        # Verify every inferred skipped question actually fails its exported condition.
+        questions = {e['Payload']['QuestionID']: e['Payload'] for e in data['SurveyElements'] if e.get('Element') == 'SQ'}
+        for item in report['instructions']:
+            if item['kind'] not in {'skip', 'conditional_skip'} or item.get('origin') == 'explicit_skip':
+                continue
+            choices = item.get('choice_ids', [item.get('choice_id')])
+            for cid in choices:
+                answers = {item['question_id']: {cid}}
+                for qid in item['skipped_question_ids']:
+                    self.assertFalse(logic.evaluate(logic.parse_condition(questions[qid]['DisplayLogic']), answers))
+                if item['target_question_id'] and questions[item['target_question_id']].get('DisplayLogic'):
+                    self.assertTrue(logic.evaluate(logic.parse_condition(questions[item['target_question_id']]['DisplayLogic']), answers))
+        q94 = logic.parse_condition(questions['QID94']['DisplayLogic'])
+        self.assertTrue(logic.evaluate(q94, {'QID93': {'2'}}))
+        self.assertTrue(logic.evaluate(q94, {'QID93': {'3'}}))
+        self.assertFalse(logic.evaluate(q94, {'QID93': {'4'}}))
+
     def test_db_destination_and_existing_skip_use_fallback(self):
         for change in ["DB", "skip"]:
             data = fixture()

@@ -44,9 +44,19 @@ def parse_condition(value):
         if value.get("LogicType") != "Question":
             raise UnsupportedLogic("Condition uses information other than a question response.")
         operator = value.get("Operator")
+        locator = value.get("ChoiceLocator") or value.get("LeftOperand", "")
+        count = re.fullmatch(r"q://([^/]+)/SelectedChoicesCount", str(locator))
+        if count:
+            if operator != "GreaterThanOrEqual" or not str(value.get("RightOperand", "")).isdigit():
+                raise UnsupportedLogic("Unrecognized response-count comparison.")
+            if value.get("QuestionIsInLoop", "no") not in {"no", False}:
+                raise UnsupportedLogic("Response-count condition refers to a looped question.")
+            minimum = int(value["RightOperand"])
+            if minimum < 1 or value.get("QuestionID", count[1]) != count[1]:
+                raise UnsupportedLogic("Invalid response-count comparison.")
+            return ("count", count[1], minimum)
         if operator not in {"Selected", "NotSelected"}:
             raise UnsupportedLogic("Only Selected and NotSelected comparisons are supported initially.")
-        locator = value.get("ChoiceLocator") or value.get("LeftOperand", "")
         match = re.fullmatch(r"q://([^/]+)/SelectableChoice/([^/]+)", str(locator))
         if not match or value.get("QuestionIsInLoop", "no") not in {"no", False}:
             raise UnsupportedLogic("Condition is not an ordinary choice selection.")
@@ -64,7 +74,7 @@ def parse_condition(value):
         return parsed[0]
     joins = []
     for child in children[1:]:
-        join = child.get("Conjunction") or child.get("Type")
+        join = child.get("Conjunction") or child.get("Conjuction") or child.get("Type")
         if join not in {"And", "Or"}:
             raise UnsupportedLogic("Condition conjunction is ambiguous.")
         joins.append(join.lower())
@@ -74,7 +84,7 @@ def parse_condition(value):
 
 
 def dependencies(condition):
-    if condition[0] == "choice":
+    if condition[0] in {"choice", "count"}:
         return {condition[1]}
     if condition[0] == "constant":
         return set()
@@ -86,6 +96,8 @@ def evaluate(condition, answers):
     kind = condition[0]
     if kind == "constant":
         return condition[1]
+    if kind == "count":
+        return len(answers[condition[1]]) >= condition[2] if condition[1] in answers else None
     if kind == "choice":
         _, qid, choice, positive = condition
         if qid not in answers:
@@ -102,6 +114,12 @@ def describe(condition, questions, references):
     kind = condition[0]
     if kind == "constant":
         raise UnsupportedLogic("Constant visibility is not a respondent instruction.")
+    if kind == "count":
+        _, qid, minimum = condition
+        if qid not in references or questions[qid].get("QuestionType") != "MC":
+            raise UnsupportedLogic("Response-count condition has no multiple-choice source on paper.")
+        amount = "one response" if minimum == 1 else "{} responses".format(minimum)
+        return "you selected at least {} in {}".format(amount, references[qid])
     if kind == "choice":
         _, qid, cid, positive = condition
         if qid not in references:
@@ -120,7 +138,7 @@ def describe(condition, questions, references):
                           for child, p in zip(condition[1], phrases))
 
 
-def analyze_survey(data, numbering="sequential"):
+def analyze_survey(data, numbering="sequential", question_numbering=None):
     """Return JSON-compatible instructions, source QIDs and review issues.
 
     Uses the converter's flow/block/orphan order, excluding trash and counting
@@ -132,15 +150,20 @@ def analyze_survey(data, numbering="sequential"):
     elements = data.get("SurveyElements")
     if not isinstance(elements, list):
         raise ValueError("No SurveyElements array found; is this a QSF export?")
-    questions, blocks, flows = {}, {}, []
+    questions, blocks, flows, skip_rules = {}, {}, [], {}
     for element in elements:
         payload = element.get("Payload", {})
         if element.get("Element") == "SQ" and isinstance(payload, dict):
             questions[payload.get("QuestionID")] = payload
+            if payload.get("SkipLogic"):
+                skip_rules.setdefault(payload.get("QuestionID"), []).append(payload["SkipLogic"])
         elif element.get("Element") == "BL":
             for block in payload if isinstance(payload, list) else [payload]:
                 if isinstance(block, dict) and block.get("ID"):
                     blocks[block["ID"]] = block
+                    for item in block.get("BlockElements", []):
+                        if item.get("Type") == "Question" and item.get("SkipLogic"):
+                            skip_rules.setdefault(item.get("QuestionID"), []).append(item["SkipLogic"])
         elif element.get("Element") == "FL":
             flows.append(payload)
     issues, sections, order = [], [], []
@@ -230,8 +253,11 @@ def analyze_survey(data, numbering="sequential"):
         if questions[qid].get("QuestionType") != "DB":
             number += 1
             tag = text(questions[qid].get("DataExportTag"))
-            references[qid] = ("Q{}".format(number) if numbering == "sequential" else
-                               tag or ("Q{}".format(number) if numbering == "survey" else qid))
+            mode = (question_numbering or {}).get(qid, numbering)
+            if mode not in {"sequential", "survey", "off"}:
+                raise ValueError("Invalid numbering mode for {}".format(qid))
+            references[qid] = ("Q{}".format(number) if mode == "sequential" else
+                               tag or ("Q{}".format(number) if mode == "survey" else qid))
     if len(set(references.values())) != len(references):
         # Distinguish ambiguous export tags rather than silently pointing at the wrong question.
         for qid, ref in list(references.items()):
@@ -244,8 +270,6 @@ def analyze_survey(data, numbering="sequential"):
 
     for qid in order:
         q = questions[qid]
-        if q.get("SkipLogic"):
-            review("question", qid, "Existing Qualtrics skip logic requires review; not translated in this first version.")
         if q.get("DisplayLogic"):
             try:
                 condition = parse_condition(q["DisplayLogic"])
@@ -259,7 +283,7 @@ def analyze_survey(data, numbering="sequential"):
                 conditions[qid] = None
                 review("question", qid, str(exc))
 
-    for section in sections:
+    for section_index, section in enumerate(sections):
         bid, ids = section["block_id"], section["question_ids"]
         if section["conditions"] and not section["uncertain"]:
             try:
@@ -275,10 +299,52 @@ def analyze_survey(data, numbering="sequential"):
         if section["uncertain"]:
             review("block", bid, "Automatic routing disabled because block order or eligibility is unresolved.")
             continue
+        # QSF exports can store skip rules on BlockElements rather than SQ payloads.
+        # Initially translate only ordinary single-choice exits to this block's end.
+        for index, qid in enumerate(ids):
+            q = questions[qid]
+            if qid not in skip_rules:
+                continue
+            proposals, destinations, seen, bad = [], {}, set(), False
+            try:
+                if q.get("QuestionType") != "MC" or q.get("Selector") not in {"SAVR", "SAHR", "SACOL", "DL", "SB"}:
+                    raise UnsupportedLogic("Skip rule uses an unsupported response type.")
+                for bundle in skip_rules[qid]:
+                    if not isinstance(bundle, list):
+                        raise UnsupportedLogic("Unrecognized skip-rule structure.")
+                    for rule in bundle:
+                        signature = json.dumps(rule, sort_keys=True)
+                        if signature in seen:
+                            continue
+                        seen.add(signature)
+                        match = re.fullmatch(r"q://([^/]+)/SelectableChoice/([^/]+)",
+                                             str(rule.get("ChoiceLocator") or rule.get("Locator", "")))
+                        if not match or match[1] != qid or rule.get("Condition") != "Selected":
+                            raise UnsupportedLogic("Skip rule is not a simple selected-choice condition.")
+                        cid = match[2]
+                        if cid not in q.get("Choices", {}) or rule.get("SkipToDestination") != "ENDOFBLOCK":
+                            raise UnsupportedLogic("Only selected-choice skips to end of block are supported initially.")
+                        next_section = sections[section_index + 1] if section_index + 1 < len(sections) else None
+                        direction = ("Skip to the {} section.".format(next_section["title"])
+                                     if next_section and next_section["title"] not in {"", "Default Question Block"}
+                                     else "Skip the remaining questions in this section.")
+                        if cid in destinations:
+                            continue
+                        destinations[cid] = "ENDOFBLOCK"
+                        proposals.append({"kind": "skip", "origin": "explicit_skip", "question_id": qid,
+                                          "choice_id": cid, "choice_label": text(q["Choices"][cid]),
+                                          "text": direction, "target_question_id": None,
+                                          "target_block_id": next_section["block_id"] if next_section else None,
+                                          "block_id": bid, "skipped_question_ids": ids[index + 1:]})
+            except (UnsupportedLogic, AttributeError) as exc:
+                bad = True
+                review("question", qid, str(exc))
+            if not bad:
+                instructions.extend(proposals)
         for index, qid in enumerate(ids[:-1]):
             q = questions[qid]
             single = q.get("QuestionType") == "MC" and q.get("Selector") in {"SAVR", "SAHR", "SACOL", "DL", "SB"}
-            if not single or q.get("SkipLogic") or q.get("ChoiceDisplayLogic"):
+            if not single or qid in skip_rules or q.get("ChoiceDisplayLogic"):
                 continue
             next_id = ids[index + 1]
             if next_id not in conditions or conditions[next_id] is None or dependencies(conditions[next_id]) != {qid}:

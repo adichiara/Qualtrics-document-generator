@@ -45,6 +45,7 @@ python qsf_to_paper.py your-survey.qsf --list-questions
 - [Example with respondent logic in Word](examples/Example_survey-paper-logic.docx) and [PDF](examples/Example_survey-paper-logic.pdf), with the analyzer's years-of-service skip direction added to a separate generated copy; [analysis report](examples/Example_survey-logic.json)
 - [Survey-specific configuration](examples/Example_survey_config.json), demonstrating survey numbering, bold prompts, and a QID-specific matrix border style
 - [Qualtrics product survey demo](examples/Demo_product_survey.qsf)
+- [Real fuel handler survey](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey.qsf), with [Word](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey-paper-logic.docx), [PDF](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey-paper-logic.pdf), [survey config](examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey_config.json), and [routing/layout evaluation](docs/handwear-evaluation.md)
 - [Manually revised layout reference](examples/references/Example_survey-paper_revised.docx), retained as a formatting reference
 
 Generate examples into an ignored local output directory:
@@ -65,6 +66,8 @@ Run the configuration regression checks from the repository root:
 ```bash
 python tests/test_configuration.py
 python tests/test_config_layers.py
+python tests/test_logic.py
+python tests/test_logic_document.py
 ```
 
 The formatter preserves all non-trash questions it finds, including those absent from survey flow. Question types without a full paper equivalent produce a console warning for manual review. Very large matrices may span pages or become multiple column panels to retain their content.
@@ -73,7 +76,7 @@ The Word converter currently omits logic. A separate [respondent logic prototype
 
 ```bash
 python qsf_logic.py your-survey.qsf -o instructions.json
-python tests/test_logic.py
+python qsf_logic_to_paper.py your-survey.qsf --report instructions.json
 ```
 
-The script currently generates Word documents; the included PDF is an exported example.
+The optional adapter inserts respondent instructions into a separate generated Word copy; the original converter is unchanged. These scripts generate Word documents; the included PDFs are exported examples.
