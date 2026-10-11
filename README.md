@@ -40,6 +40,7 @@ python qsf_to_paper.py your-survey.qsf --list-questions
 
 ## Included examples
 
+- Latest response-layout update: [source ZIP](downloads/Qualtrics-document-generator-4b6916e.zip), [MRE Word](examples/FY27_MRE_IOTE-paper-logic-4b6916e.docx), and [MRE PDF](examples/FY27_MRE_IOTE-paper-logic-4b6916e.pdf). These versioned downloads include vertical Yes/No choices, more form writing space where the page permits, banded lists above 10 choices, and 0.5-inch multiple-choice indentation.
 - [Example survey QSF](examples/Example_survey.qsf)
 - [Example Word document](examples/Example_survey-paper.docx) and [PDF](examples/Example_survey-paper.pdf), using the default print layout
 - [Example with respondent logic in Word](examples/Example_survey-paper-logic.docx) and [PDF](examples/Example_survey-paper-logic.pdf), with the analyzer's years-of-service skip direction added to a separate generated copy; [analysis report](examples/Example_survey-logic.json)
