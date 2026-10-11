@@ -2,11 +2,13 @@
 
 Convert a Qualtrics `.qsf` survey export into an editable Word document for collecting responses on paper.
 
-The converter preserves survey wording and supported rich text formatting, creates editable response tables, and adapts pagination for print. Matrix questions use statement rows, equal-width scale columns, and optional rotated headers. Online page breaks are ignored; later survey blocks start on new pages by default.
+The converter preserves survey wording and supported rich text formatting, creates editable response tables, and adapts pagination for print. Matrix questions use statement rows, equal-width scale columns, and optional rotated headers. Online page breaks are ignored. Block headings and fresh pages for later blocks are independent options, both off by default.
 
 ## Run locally
 
 Requires Python 3.8 or newer.
+
+[Download the code and configuration with the block-section options](downloads/Qualtrics-document-generator-block-options.zip).
 
 ```bash
 pip install -r requirements.txt
@@ -29,6 +31,7 @@ All defaults are built into the Python code. The optional `config.json` beside t
 python qsf_to_paper.py your-survey.qsf --survey-config your-survey_config.json
 python qsf_to_paper.py your-survey.qsf --response-font-size 10 --bold-questions
 python qsf_to_paper.py your-survey.qsf --set matrix.row_bottom_border.enabled=true
+python qsf_to_paper.py your-survey.qsf --show-block-names --new-page-per-block
 ```
 
 Settings apply in this order: built-in defaults, main config, survey config, general CLI options, then per-question overrides. Missing config files do not prevent conversion. See [the configuration guide](docs/configuration.md) for all settings and examples.
@@ -71,6 +74,7 @@ python tests/test_config_layers.py
 python tests/test_logic.py
 python tests/test_logic_document.py
 python tests/test_response_layout.py
+python tests/test_block_sections.py
 ```
 
 The formatter preserves all non-trash questions it finds, including those absent from survey flow. Question types without a full paper equivalent produce a console warning for manual review. Very large matrices may span pages or become multiple column panels to retain their content.

@@ -5,6 +5,9 @@
     "section_size": 12,
     "preserve_rich_text": true
   },
+  "sections": {
+    "show_block_names": false
+  },
   "page": {
     "paper_size": "letter",
     "orientation": "portrait",
@@ -89,7 +92,7 @@
     "line_height_inches": 0.3
   },
   "pagination": {
-    "new_page_per_block": true,
+    "new_page_per_block": false,
     "keep_questions_together": true,
     "new_page_for_large_matrices": true,
     "large_matrix_min_rows": 8,

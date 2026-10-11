@@ -54,12 +54,39 @@ class LogicDocumentTests(unittest.TestCase):
         source = ROOT / 'qsf_to_paper.py'
         before = hashlib.sha256(source.read_bytes()).hexdigest()
         data = json.loads((ROOT / 'examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey.qsf').read_text(encoding='utf-8-sig'))
-        doc, report = self.convert(data)
+        doc, report = self.convert(data, {'sections': {'show_block_names': True}})
         self.assertEqual(len(report['question_references']), 79)
         combined = '\n'.join(p.text for p in doc.paragraphs) + '\n' + '\n'.join(c.text for t in doc.tables for r in t.rows for c in r.cells)
         self.assertIn('Skip to the HANDWEAR section.', combined)
         self.assertIn('selected at least one response in Q65', combined)
         self.assertEqual(hashlib.sha256(source.read_bytes()).hexdigest(), before)
+
+    def test_hidden_section_names_use_visible_question_destination(self):
+        data = json.loads((ROOT / 'examples/Extreme_Cold_Weather_Fuel_Handler_Handwear_Survey.qsf').read_text(encoding='utf-8-sig'))
+        doc, report = self.convert(data)
+        self.assertFalse(any(p.style.name == 'Heading 1' for p in doc.paragraphs))
+        combined = '\n'.join(c.text for t in doc.tables for r in t.rows for c in r.cells)
+        self.assertNotIn('Skip to the HANDWEAR section.', combined)
+        skips = [item for item in report['instructions'] if item.get('target_block_id')]
+        self.assertTrue(skips)
+        for item in skips:
+            reference = report['question_references'][item['target_question_id']]
+            self.assertEqual(item['text'], 'Skip to {}.'.format(reference))
+            self.assertIn(item['text'], combined)
+
+    def test_hidden_section_destination_after_unnumbered_description(self):
+        data = fixture()
+        question(data, 3)['QuestionType'] = 'DB'
+        blocks = data['SurveyElements'][-2]['Payload']
+        blocks[0]['BlockElements'] = blocks[0]['BlockElements'][:2]
+        blocks.append({'ID': 'BL2', 'Description': 'Next section', 'Type': 'Standard',
+                       'BlockElements': [{'Type': 'Question', 'QuestionID': 'QID3'},
+                                         {'Type': 'Question', 'QuestionID': 'QID4'}]})
+        data['SurveyElements'][-1]['Payload']['Flow'].append({'Type': 'Block', 'ID': 'BL2'})
+        doc, report = self.convert(data)
+        skip = next(item for item in report['instructions'] if item['kind'] == 'skip')
+        self.assertEqual(skip['target_question_id'], 'QID4')
+        self.assertEqual(skip['text'], 'Skip to Q3.')
 
 
 if __name__ == '__main__':

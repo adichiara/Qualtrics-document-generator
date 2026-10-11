@@ -4,6 +4,7 @@ python qsf_logic_to_paper.py survey.qsf -o survey-paper-logic.docx
 """
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -43,6 +44,24 @@ def convert_with_logic(qsf, output, config=None, report_path=None):
     modes = {qid: config["question_overrides"].get(qid, {}).get("questions", {}).get(
                  "numbering", config["questions"]["numbering"]) for qid in questions}
     report = logic.analyze_survey(data, config["questions"]["numbering"], modes)
+    if not config["sections"]["show_block_names"]:
+        # A section name cannot serve as a paper skip destination when hidden.
+        blocks = report["blocks"]
+        for instruction in report["instructions"]:
+            if instruction["kind"] not in {"skip", "conditional_skip"} or instruction.get("target_question_id"):
+                continue
+            current = next((i for i, block in enumerate(blocks)
+                            if block["block_id"] == instruction["block_id"]), None)
+            if current is None:
+                continue
+            target = next((qid for block in blocks[current + 1:] for qid in block["question_ids"]
+                           if qid in report["question_references"]), None)
+            direction = "Skip to {}.".format(report["question_references"][target]) if target else "Skip the remaining questions."
+            instruction["text"] = re.sub(
+                r"(?:Skip|skip) (?:to the .* section|the remaining questions in this section)\.$",
+                lambda match: direction if match[0][0].isupper() else direction[0].lower() + direction[1:],
+                instruction["text"])
+            instruction["target_question_id"] = target
     count, warnings = formatter.convert(qsf, output, config=config)
     if report["instructions"] and any(mode == "off" for mode in modes.values()):
         warnings.append("Some question numbers are hidden; ensure all routing references are identifiable before printing.")

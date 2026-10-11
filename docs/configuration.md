@@ -77,13 +77,35 @@ You can also change an override from the CLI:
 python qsf_to_paper.py survey.qsf --set question_overrides.QID22.matrix.header_rotation=always
 ```
 
-Question overrides support `questions`, `responses`, `tables`, `matrix`, `write_in`, and question-level `pagination` settings. Under `fonts`, they support `family` and `preserve_rich_text`. Paper dimensions, title/section sizes, and `new_page_per_block` are document-wide settings.
+Question overrides support `questions`, `responses`, `tables`, `matrix`, `write_in`, and question-level `pagination` settings. Under `fonts`, they support `family` and `preserve_rich_text`. Paper dimensions, title/section sizes, `sections`, and `new_page_per_block` are document-wide settings.
+
+## Block sections
+
+Block names and page breaks before later blocks are independent options, both off by default:
+
+```json
+{
+  "sections": {"show_block_names": false},
+  "pagination": {"new_page_per_block": false}
+}
+```
+
+Set either value to `true` in your main or survey configuration. Block names use the QSF block description; empty names and Qualtrics' generic "Default Question Block" label remain suppressed. Enabling block page breaks starts each later nonempty block on a fresh page, with or without a heading; the first block does not receive an extra page break. Empty blocks and repeated flow references do not add headings or pages.
+
+```bash
+python qsf_to_paper.py survey.qsf --show-block-names --new-page-per-block
+python qsf_to_paper.py survey.qsf --no-show-block-names --no-new-page-per-block
+python qsf_logic_to_paper.py survey.qsf --set sections.show_block_names=true --set pagination.new_page_per_block=true
+```
+
+Both options also support `--set` and apply to the respondent-logic adapter. When headings are hidden, its cross-block skip directions refer to the next question rather than an invisible section name. Question-level page breaks and automatic large-matrix page breaks continue to apply independently.
 
 ## Setting conventions
 
 | Group | Behavior |
 |---|---|
 | `fonts` | Font family, title and section sizes, and rich text preservation. Font sizes are points. |
+| `sections` | Show QSF block descriptions as section headings; off by default. |
 | `questions` | Prompt size, numbering, bold, blank lines before, line spacing, space after in points, and a forced page break before a particular question. Bold off preserves emphasis already present in the survey; bold on makes the entire prompt bold. |
 | `responses` | Label and symbol sizes, symbols, choice layout, long-list thresholds, dropdown write-in threshold, and minimum heights for response/field rows. `layout` is `auto`, `vertical`, or `horizontal`. Write-in choices stay vertical even if horizontal is requested. |
 | `tables` | General response-table spacing, padding, banding, full grid borders, and row bottom borders. |

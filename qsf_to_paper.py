@@ -4,8 +4,8 @@
 Usage: python qsf_to_paper.py survey.qsf [--config config.json] [--survey-config survey_config.json]
 Requires: python-docx (pip install python-docx)
 
-Paper pagination ignores QSF page breaks. By default new blocks start on fresh
-pages and questions stay together where possible. Configuration is optional.
+Paper pagination ignores QSF page breaks. Block names and new pages per block
+are optional and off by default; questions stay together where possible.
 """
 
 import argparse
@@ -34,6 +34,7 @@ MULTIPLE_MARK = "☐"
 DEFAULT_CONFIG = {
     "fonts": {"family": "Arial", "title_size": 17, "section_size": 12,
               "preserve_rich_text": True},
+    "sections": {"show_block_names": False},
     "page": {"paper_size": "letter", "orientation": "portrait",
              "margin_top_inches": .7, "margin_bottom_inches": .7,
              "margin_left_inches": .8, "margin_right_inches": .8},
@@ -66,7 +67,7 @@ DEFAULT_CONFIG = {
                  "small_underscore_count": 20, "large_lines": 3,
                  "large_line_spacing": 1.5, "text_lines": 3,
                  "line_height_inches": .3},
-    "pagination": {"new_page_per_block": True, "keep_questions_together": True,
+    "pagination": {"new_page_per_block": False, "keep_questions_together": True,
                    "new_page_for_large_matrices": True, "large_matrix_min_rows": 8,
                    "large_matrix_min_columns": 9, "large_matrix_min_height_inches": 4.5},
     "question_overrides": {}
@@ -1198,7 +1199,7 @@ def convert(qsf, output, text_lines=None, include_ids=False, config=None):
         printed_blocks.add(block_id)
         description = clean(block.get("Description", ""))
         heading = None
-        if description and description.lower() not in {"default question block", "trash / unused questions"}:
+        if writer.base_config["sections"]["show_block_names"] and description and description.lower() not in {"default question block", "trash / unused questions"}:
             heading = writer.doc.add_paragraph(description, style="Heading 1")
             heading.paragraph_format.keep_with_next = True
             heading.paragraph_format.page_break_before = new_block_page
@@ -1288,6 +1289,7 @@ def main():
     toggle("matrix-row-borders", "Draw bottom borders on matrix response rows")
     ap.add_argument("--matrix-row-border-weight", type=float, metavar="POINTS")
     toggle("new-page-per-block", "Start each later block on a fresh page")
+    toggle("show-block-names", "Show survey block descriptions as section headings")
     toggle("keep-questions-together", "Keep question prompts and response tables together where possible")
     args = ap.parse_args()
     try:
@@ -1315,6 +1317,7 @@ def main():
                      "question_line_spacing": "questions.line_spacing", "table_line_spacing": "tables.line_spacing",
                      "blank_lines_before": "questions.blank_lines_before",
                      "new_page_per_block": "pagination.new_page_per_block",
+                     "show_block_names": "sections.show_block_names",
                      "keep_questions_together": "pagination.keep_questions_together"}
         for arg, key in shortcuts.items():
             value = getattr(args, arg)
