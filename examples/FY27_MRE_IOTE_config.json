@@ -1,0 +1,11 @@
+{
+  "question_overrides": {
+    "QID19789337": {
+      "responses": {
+        "dropdown_mode": "choices",
+        "max_rows": 10,
+        "column_breaks_before": [10, 15]
+      }
+    }
+  }
+}

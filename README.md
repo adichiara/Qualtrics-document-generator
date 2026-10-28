@@ -10,7 +10,7 @@ Dropdowns retain categorical choices such as military rank grades as multiple-ch
 
 Requires Python 3.8 or newer.
 
-[Download the current code and configuration](downloads/Qualtrics-document-generator-question-list-20261028.zip).
+[Download the current code and configuration](downloads/Qualtrics-document-generator-rank-columns-20261028.zip).
 
 ```bash
 pip install -r requirements.txt
@@ -37,6 +37,8 @@ python qsf_to_paper.py your-survey.qsf --show-block-names --new-page-per-block
 ```
 
 Settings apply in this order: built-in defaults, main config, survey config, general CLI options, then per-question overrides. Missing config files do not prevent conversion. See [the configuration guide](docs/configuration.md) for all settings and examples.
+
+Rank-grade lists automatically use separate columns for enlisted, warrant, and officer grades, regardless of QID (`responses.group_rank_grades`, default `true`). Use `responses.max_rows` to cap the number of options in each vertical column and `responses.column_breaks_before` to choose exactly where a new column begins. For example, `[10, 15]` starts new columns before options 10 and 15. Manual breaks override automatic grouping; see the [MRE rank-grade config](examples/FY27_MRE_IOTE_config.json). Row caps and manual breaks default to automatic (`null` and `[]`).
 
 ```bash
 python qsf_to_paper.py --help
@@ -79,6 +81,7 @@ python tests/test_logic_document.py
 python tests/test_response_layout.py
 python tests/test_block_sections.py
 python tests/test_dropdown_layout.py
+python tests/test_choice_columns.py
 ```
 
 The formatter preserves all non-trash questions it finds, including those absent from survey flow. Question types without a full paper equivalent produce a console warning for manual review. Very large matrices may span pages or become multiple column panels to retain their content.

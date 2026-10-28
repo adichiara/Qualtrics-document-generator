@@ -45,6 +45,7 @@ DEFAULT_CONFIG = {
                   "single_mark": SINGLE_MARK, "multiple_mark": MULTIPLE_MARK,
                   "layout": "auto", "multiple_columns_above": 10,
                   "max_columns": 2, "short_label_max_chars": 30,
+                  "max_rows": None, "column_breaks_before": [], "group_rank_grades": True,
                   "dropdown_mode": "auto", "dropdown_write_in_at": 50,
                   "dropdown_numeric_write_in_at": 12,
                   "dropdown_max_columns": 3, "row_height_inches": .25,
@@ -109,6 +110,12 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
                 validate_patch(override, allowed, f"{name}.{qid}")
         elif isinstance(schema[key], dict):
             validate_patch(value, schema[key], name)
+        elif key == "column_breaks_before":
+            if not isinstance(value, list):
+                raise ValueError(f"{name} must be a list of option positions or labels.")
+            for point in value:
+                if not ((type(point) is int and point >= 2) or (isinstance(point, str) and point.strip())):
+                    raise ValueError(f"{name}: each break must be an integer >= 2 or a nonempty label.")
         elif value is None:
             if schema[key] is not None:
                 raise ValueError(f"{name} cannot be null.")
@@ -130,7 +137,7 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
             zero_allowed = key.startswith("margin_") or key in {"blank_lines_before", "space_after_pt", "cell_padding_inches", "multiple_columns_above", "indent_inches"}
             if value < 0 or (not zero_allowed and value == 0):
                 raise ValueError(f"{name} must be {'nonnegative' if zero_allowed else 'positive'}.")
-            integer_keys = {"blank_lines_before", "multiple_columns_above", "max_columns", "short_label_max_chars",
+            integer_keys = {"blank_lines_before", "multiple_columns_above", "max_columns", "max_rows", "short_label_max_chars",
                             "dropdown_write_in_at", "dropdown_numeric_write_in_at", "dropdown_max_columns", "rotate_at_columns", "inline_prompt_max_chars",
                             "small_underscore_count", "large_lines", "text_lines", "large_matrix_min_rows", "large_matrix_min_columns"}
             if key in integer_keys and not isinstance(value, int):
@@ -485,6 +492,32 @@ def bottom_line(cell, weight=.5, color="999999"):
     borders.append(border)
 
 
+def rank_grade_code(label):
+    """Recognize enlisted, warrant, and officer grade codes in a choice label."""
+    value = str(flat(label)).lower().replace("\u2013", "-").replace("\u2014", "-")
+    rank = re.search(r"\b(e|w|wo|cwo|o|or|of)\s*-?\s*(\d{1,2})([a-z]?)\b", value)
+    if rank:
+        family = {"e": 0, "or": 0, "w": 1, "wo": 1, "cwo": 1, "o": 2, "of": 2}[rank[1]]
+        return family, int(rank[2]), rank[3]
+    return None
+
+
+def rank_grade_breaks(choices):
+    """Start a column at each contiguous grade family without reordering choices."""
+    codes = [rank_grade_code(label) for label, _ in choices]
+    if not codes or any(code is None for code in codes):
+        return []
+    families = [code[0] for code in codes]
+    seen, breaks = {families[0]}, []
+    for i in range(1, len(families)):
+        if families[i] != families[i - 1]:
+            if families[i] in seen:
+                return []
+            seen.add(families[i])
+            breaks.append(i)
+    return breaks
+
+
 def ordered_choice_kind(labels):
     """Distinguish numeric/unit ranges from military grades without sorting them.
 
@@ -508,10 +541,9 @@ def ordered_choice_kind(labels):
         words = re.findall(r"[a-z]+", value)
         if numbers and all(word in units for word in words):
             numeric.append(tuple(float(number) for number in numbers))
-        rank = re.search(r"\b(e|w|o|or|of)\s*-?\s*(\d{1,2})([a-z]?)\b", value)
-        if rank:
-            group = {"e": 0, "or": 0, "w": 1, "o": 2, "of": 2}[rank[1]]
-            grades.append((group, int(rank[2]), rank[3]))
+        code = rank_grade_code(value)
+        if code is not None:
+            grades.append(code)
     # Grade codes such as OR-1 are categories even though they contain numbers.
     for kind, sequence in (("grade", grades), ("numeric", numeric)):
         if len(sequence) < max(3, math.ceil(len(labels) * .8)) or len(set(sequence)) < 3:
@@ -810,7 +842,7 @@ class Writer:
                 bottom_line(answer)
             row.height = Inches(height)
 
-    def options(self, choices, multiple=False, rating=False, max_columns=None):
+    def options(self, choices, multiple=False, rating=False, max_columns=None, question_id=None):
         choices = [(flat(label), other) for label, other in choices]
         cfg = self.settings["responses"]
         indent = cfg["indent_inches"]
@@ -820,6 +852,18 @@ class Writer:
         if not choices:
             self.lines(1, indent_inches=indent)
             return
+        warning_prefix = f"{question_id}: " if question_id else ""
+        breaks = set()
+        for point in cfg["column_breaks_before"]:
+            matches = [point - 1] if type(point) is int else [i for i, (label, _) in enumerate(choices) if str(label) == str(flat(point))]
+            if len(matches) != 1 or not 0 < matches[0] < len(choices):
+                self.warnings.append(warning_prefix + f"Column break before {point!r} is missing, ambiguous, or outside this list; ignored.")
+                continue
+            breaks.add(matches[0])
+        if not cfg["column_breaks_before"] and cfg["group_rank_grades"] and cfg["layout"] != "horizontal":
+            breaks.update(rank_grade_breaks(choices))
+        if breaks:
+            rating = False
         banded = True if len(choices) > cfg["multiple_columns_above"] and cfg["large_list_banded_rows"] else None
         if rating:
             table = self.response_table([width / len(choices)] * len(choices), 2,
@@ -838,43 +882,62 @@ class Writer:
         # Read down each column, then continue at the top of the next column.
         split = count > cfg["multiple_columns_above"] and max_length <= cfg["short_label_max_chars"] and not any(other or "\n" in label for label, other in choices)
         groups = min(max_columns if max_columns is not None else cfg["max_columns"], max(1, math.ceil(count / max(1, cfg["multiple_columns_above"])))) if split else 1
-        groups = min(groups, max(1, int(width / 1.2)))
-        rows = math.ceil(count / groups)
-        label_width = (width - (groups - 1) * .4) / groups - .3
-        widths = []
-        for group in range(groups):
-            if group: widths.append(.4)
-            widths.extend([.3, label_width])
-        table = self.response_table(widths, rows, indent_inches=indent, banded_rows=banded)
-        size = self.label_size([label for label, _ in choices], widths[1])
-        for i, (label, other) in enumerate(choices):
-            group, row = divmod(i, rows)
-            mark_cell = table.cell(row, 3 * group)
-            label_cell = table.cell(row, 3 * group + 1)
-            self.cell_text(mark_cell, mark, size=cfg["symbol_size"])
-            mark_cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
-            mark_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-            # Write-in underscores remain in the same editable cell as the label.
-            if other:
-                size_name = other if isinstance(other, str) else 'small'
-                if size_name == 'large':
-                    line = '_' * max(self.settings["write_in"]["small_underscore_count"], int((widths[1] - .16) * 72 / (size * .56)))
-                    label += '\n' + '\n'.join([line] * self.settings["write_in"]["large_lines"])
-                elif size_name == 'medium':
-                    last = label.split('\n')[-1]
-                    remaining = (widths[1] - .16) * 72 - text_width(last + ' ', size)
-                    if remaining < size * .56:
-                        label += '\n'
-                        remaining = (widths[1] - .16) * 72
-                    else:
-                        label += ' '
-                    label += '_' * max(1, int(remaining / (size * .56)))
-                else:
-                    label += ' ' + '_' * self.settings["write_in"]["small_underscore_count"]
-            self.cell_text(label_cell, label, size=size)
-            if other == 'large':
-                label_cell.paragraphs[0].paragraph_format.line_spacing = self.settings["write_in"]["large_line_spacing"]
-            label_cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+        capacity = max(1, int(width / 1.2))
+        if breaks:
+            starts = [0] + sorted(breaks) + [count]
+            columns = [choices[a:b] for a, b in zip(starts, starts[1:])]
+            if cfg["max_rows"] is not None:
+                columns = [column[i:i + cfg["max_rows"]] for column in columns
+                           for i in range(0, len(column), cfg["max_rows"])]
+        else:
+            groups = min(groups, capacity)
+            if cfg["max_rows"] is not None:
+                groups = max(groups, math.ceil(count / cfg["max_rows"]))
+            rows = math.ceil(count / groups)
+            columns = [choices[i:i + rows] for i in range(0, count, rows)]
+        if len(columns) > capacity:
+            self.warnings.append(warning_prefix + "Response columns use stacked table panels to fit the page width; all choices and column breaks are preserved.")
+        # Keep one font size across every option, including any stacked panels.
+        largest_panel = min(capacity, len(columns))
+        minimum_label_width = (width - (largest_panel - 1) * .4) / largest_panel - .3
+        size = self.label_size([label for label, _ in choices], minimum_label_width)
+        for offset in range(0, len(columns), capacity):
+            panel = columns[offset:offset + capacity]
+            groups = len(panel)
+            label_width = (width - (groups - 1) * .4) / groups - .3
+            widths = []
+            for group in range(groups):
+                if group: widths.append(.4)
+                widths.extend([.3, label_width])
+            table = self.response_table(widths, max(map(len, panel)), indent_inches=indent, banded_rows=banded)
+            for group, column in enumerate(panel):
+                for row, (label, other) in enumerate(column):
+                    mark_cell = table.cell(row, 3 * group)
+                    label_cell = table.cell(row, 3 * group + 1)
+                    self.cell_text(mark_cell, mark, size=cfg["symbol_size"])
+                    mark_cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+                    mark_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    # Write-in underscores remain in the same editable cell as the label.
+                    if other:
+                        size_name = other if isinstance(other, str) else 'small'
+                        if size_name == 'large':
+                            line = '_' * max(self.settings["write_in"]["small_underscore_count"], int((widths[1] - .16) * 72 / (size * .56)))
+                            label += '\n' + '\n'.join([line] * self.settings["write_in"]["large_lines"])
+                        elif size_name == 'medium':
+                            last = label.split('\n')[-1]
+                            remaining = (widths[1] - .16) * 72 - text_width(last + ' ', size)
+                            if remaining < size * .56:
+                                label += '\n'
+                                remaining = (widths[1] - .16) * 72
+                            else:
+                                label += ' '
+                            label += '_' * max(1, int(remaining / (size * .56)))
+                        else:
+                            label += ' ' + '_' * self.settings["write_in"]["small_underscore_count"]
+                    self.cell_text(label_cell, label, size=size)
+                    if other == 'large':
+                        label_cell.paragraphs[0].paragraph_format.line_spacing = self.settings["write_in"]["large_line_spacing"]
+                    label_cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
 
     def text_entry_lines(self, q, selector):
         if selector == "SL":
@@ -1135,7 +1198,8 @@ class Writer:
             else:
                 self.options(labels, selector.startswith("MA"),
                              rating=not selector.startswith("MA") and is_rating_scale(q, labels),
-                             max_columns=response["dropdown_max_columns"] if selector == "DL" else None)
+                             max_columns=response["dropdown_max_columns"] if selector == "DL" else None,
+                             question_id=qid)
         elif qtype == "Matrix":
             multiple = selector.startswith("MA") or q.get("SubSelector") in {"MultipleAnswer", "MultiAnswer"}
             self.grid([x for x, _ in labels], [clean(a) for _, a in answers], multiple,
@@ -1182,7 +1246,7 @@ class Writer:
             self.warnings.append(f"{qid}: side by side columns need manual verification.")
         else:
             if labels:
-                self.options(labels)
+                self.options(labels, question_id=qid)
             else:
                 self.lines()
             self.warnings.append(f"{qid}: unsupported question type {qtype or 'unknown'} / {selector or 'unknown'}.")

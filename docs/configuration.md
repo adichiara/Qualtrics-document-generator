@@ -160,6 +160,41 @@ python qsf_logic_to_paper.py survey.qsf --set question_overrides.QID20.responses
 
 All dropdown settings support the main config, survey config, CLI `--set`, and per-question overrides. An existing config that explicitly sets `dropdown_write_in_at` to 12 retains that threshold for ordinary categorical lists; update it to 50 for the new default. Recognized grade sequences stay as choices. Numeric ranges use their separate threshold. To force a particular question to be a write-in, set its `dropdown_mode` to `write_in`; use `choices` to display any numeric or name list explicitly. Extremely long retained lists may require more than one printed page; conversion still preserves every choice.
 
+## Choice-table rows and column breaks
+
+Rank-grade lists are grouped automatically by default, with separate columns for enlisted (`E-`), warrant (`W-`, `WO-`, `CWO-`), and officer (`O-`) grades. This uses the response labels, independently of the question's QID or wording; your 24-grade list therefore has columns of 9, 5, and 10 options without any question override. Supported grade codes may also appear in longer labels, and source wording/order is retained. All labels must contain recognized grade codes, and each family must be contiguous; otherwise ordinary layout applies. `responses.group_rank_grades` defaults to `true`; set it to `false` globally or per question to disable automatic grouping. Manual `column_breaks_before` always takes priority. An explicit horizontal layout also disables automatic grouping.
+
+`responses.max_rows` sets the maximum number of response options in each vertical column. Its default is `null` (automatic layout with no explicit row cap). Use a positive integer such as 10 in the main config, a survey config, a question override, or CLI `--set`. This controls option rows, not wrapped text lines or matrix statement rows. It applies when the response is a choice table; numeric/name dropdowns converted to write-ins keep their normal behavior unless `dropdown_mode` is set to `choices`. Horizontal rating scales retain their scale layout.
+
+`responses.column_breaks_before` defaults to `[]` (automatic breaks). Each entry starts a new column **before** that response. Use a 1-based option position (integer) or an exact plain-text response label (string). Positions follow QSF choice order, not choice IDs or recode values. Strings such as `"10"` mean a label, not position 10. Labels must identify exactly one response. Breaks are applied in survey order; duplicate break positions are harmless. Clear inherited manual breaks with `[]`.
+
+For E-1 through E-9, five warrant grades, and O-1 through O-10, automatic grouping already produces the requested layout. To specify the same layout manually, use this survey override:
+
+```json
+{
+  "question_overrides": {
+    "QID19789337": {
+      "responses": {
+        "dropdown_mode": "choices",
+        "max_rows": 10,
+        "column_breaks_before": [10, 15]
+      }
+    }
+  }
+}
+```
+
+This creates three top-aligned groups containing 9, 5, and 10 options. The overall table has 10 rows; shorter columns leave blank cells at the bottom with no response circles. A label-based equivalent is `"column_breaks_before": ["WO-1", "O-1"]` **if those labels exactly match the survey**. The supplied MRE survey uses `W-1`, so its equivalent is `["W-1", "O-1"]`. The [MRE survey config](../examples/FY27_MRE_IOTE_config.json) demonstrates a manual override using positions. Use `--list-questions` to find your own survey's QID when applying an override; automatic rank grouping needs none. Clearing manual breaks with `[]` restores automatic grouping unless `group_rank_grades` is also disabled.
+
+```bash
+python qsf_logic_to_paper.py examples/FY27_MRE_IOTE.qsf --survey-config examples/FY27_MRE_IOTE_config.json
+python qsf_logic_to_paper.py survey.qsf --set question_overrides.QID12.responses.max_rows=10 --set 'question_overrides.QID12.responses.column_breaks_before=[10,15]'
+```
+
+Manual breaks take priority over automatic balancing and the usual column/label-length limits. They also make that question a vertical list if it would otherwise use a horizontal rating scale. A row cap may add columns beyond `max_columns` or `dropdown_max_columns`; if an explicit group exceeds the cap, it is split further. Column widths still respect the printable page area. When the requested columns cannot fit side by side, the converter uses stacked table panels rather than squeezing labels or dropping responses. Font size stays consistent across all options in the question. Missing, ambiguous, first-option, or out-of-range break targets produce a console warning and are ignored; the remaining choices and valid breaks are preserved. Formatting pressure does not stop generation.
+
+## Matrix sizing
+
 Header rotation accepts `auto`, `always`, or `never`; automatic rotation uses `rotate_at_columns`. Rotated labels are flattened to remove source line breaks, then wrapped only when needed to fit. Turning rotation off on a matrix with many narrow columns may require smaller labels or a wider page.
 
 `null` is allowed only where it appears in the default config. It requests adaptive sizing, such as the matrix statement size, preferred row height, column width, or header height limit. A null question line spacing uses the document's normal spacing.
