@@ -88,6 +88,35 @@ python qsf_to_paper.py survey.qsf --set question_overrides.QID22.matrix.header_r
 
 Question overrides support `questions`, `responses`, `tables`, `matrix`, `write_in`, `piped_text`, and question-level `pagination` settings. Under `fonts`, they support `family` and `preserve_rich_text`. Paper dimensions, title/section sizes, `sections`, and `new_page_per_block` are document-wide settings.
 
+An optional `_comment` string within each QID's override is accepted as informational JSON data and is never printed or used for formatting. It can hold a question label or your own notes; it is not a literal JSON comment. It is not supported as a global setting.
+
+## Export an editable config for a source survey
+
+Both converters can write a standard JSON file containing explicit formatting settings for every QID:
+
+```bash
+python qsf_logic_to_paper.py survey.qsf --export-survey-config
+# Creates survey_config.json beside survey.qsf. Edit that file, then run:
+python qsf_logic_to_paper.py survey.qsf --survey-config survey_config.json
+```
+
+Specify a different output name or choose the input layers to capture:
+
+```bash
+python qsf_to_paper.py survey.qsf --config config.json --survey-config current_overrides.json --response-font-size 10 --export-survey-config editable_settings.json
+python qsf_logic_to_paper.py survey.qsf --survey-config editable_settings.json -o trial.docx
+```
+
+The export applies the usual precedence: built-in defaults, main config, survey config, CLI settings, then existing QID overrides. Missing config files fall back with the usual warning. It captures configurable values, including `auto` and `null`; it does not render Word to determine final font sizes, row heights, or pagination. Paper geometry, block-heading/page settings, and title/section font sizes are written once at the top; each QID contains all supported question-level settings. An `_comment` value identifies its export tag, type/selector, and source question text; export tags may differ from sequential paper numbering. Existing custom `_comment` notes are preserved.
+
+The file is a snapshot: **a value explicitly stored under a QID overrides the same global/CLI setting**. For trial and error, edit that question's value directly. Delete a setting from the QID block to restore inheritance, or remove the entire QID block to return that question to general settings. `_comment` can be changed or deleted freely. Unknown QIDs from an input config are warned about and omitted from the exported file.
+
+All source `SQ` records are included, matching the listing command, including descriptive text, unused/trash records, and questions outside flow. Exporting does not add those unused/trash records to the printed survey; normal conversion rules still apply. Malformed question records without a QID are skipped with a warning. The exported file keeps source record order, without changing the QSF or reordering questions.
+
+Export mode exits after writing JSON: no Word document, PDF, or logic report is produced and no logic analysis is run. Use the optional path on `--export-survey-config` to name its output; `-o` and `--report` remain conversion options. A config cannot be exported over the source QSF. The default output may replace an existing `<survey>_config.json`; choose a different path when retaining several trial versions.
+
+See [Example_survey_explicit_config.json](../examples/Example_survey_explicit_config.json), generated from the included example QSF with its existing survey-specific config applied. The commented reference's QID template and this exported snapshot use the same supported setting names. Use `.json` so the file can be loaded directly; no JavaScript wrapper is needed.
+
 ## Piped text
 
 Piped text is shown by default as a readable placeholder. It is never evaluated or filled with a respondent's answers. For example, `${e://Field/Issued_Trouser_Size}` becomes `{Issued_Trouser_Size}`. Set `piped_text.show` to `false` to remove the code entirely for a paper form; surrounding text stays in place, with adjacent whitespace normalized. Ordinary `{braces}` are left unchanged.

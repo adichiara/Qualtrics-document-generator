@@ -1,0 +1,2269 @@
+{
+  "fonts": {
+    "family": "Arial",
+    "title_size": 17,
+    "section_size": 12,
+    "preserve_rich_text": true
+  },
+  "sections": {
+    "show_block_names": false
+  },
+  "piped_text": {
+    "show": true
+  },
+  "page": {
+    "paper_size": "letter",
+    "orientation": "portrait",
+    "margin_top_inches": 0.7,
+    "margin_bottom_inches": 0.7,
+    "margin_left_inches": 0.8,
+    "margin_right_inches": 0.8
+  },
+  "questions": {
+    "font_size": 12,
+    "bold": true,
+    "numbering": "survey",
+    "blank_lines_before": 2,
+    "line_spacing": null,
+    "space_after_pt": 5,
+    "page_break_before": false
+  },
+  "responses": {
+    "font_size": 11,
+    "minimum_font_size": 8,
+    "symbol_size": 11,
+    "single_mark": "◯",
+    "multiple_mark": "☐",
+    "layout": "auto",
+    "multiple_columns_above": 10,
+    "max_columns": 2,
+    "short_label_max_chars": 30,
+    "max_rows": null,
+    "column_breaks_before": [],
+    "group_rank_grades": true,
+    "dropdown_mode": "auto",
+    "dropdown_write_in_at": 50,
+    "dropdown_numeric_write_in_at": 12,
+    "dropdown_max_columns": 3,
+    "row_height_inches": 0.25,
+    "field_row_height_inches": 0.34,
+    "form_preferred_row_height_inches": 0.45,
+    "large_list_banded_rows": true,
+    "indent_inches": 0.5
+  },
+  "tables": {
+    "line_spacing": 1,
+    "cell_padding_inches": null,
+    "banded_rows": false,
+    "band_color": "#F7F7F7",
+    "borders": {
+      "enabled": false,
+      "weight_pt": 0.5,
+      "color": "#D9D9D9"
+    },
+    "row_bottom_border": {
+      "enabled": false,
+      "weight_pt": 0.5,
+      "color": "#CCCCCC"
+    }
+  },
+  "matrix": {
+    "header_rotation": "auto",
+    "rotate_at_columns": 5,
+    "statement_font_size": null,
+    "minimum_statement_font_size": null,
+    "header_font_size": 10,
+    "minimum_header_font_size": 9,
+    "header_bold": true,
+    "header_max_height_inches": null,
+    "statement_column_width_inches": null,
+    "preferred_row_height_inches": null,
+    "minimum_row_height_inches": 0.2,
+    "maximum_row_height_inches": 0.45,
+    "line_spacing": 1.1,
+    "cell_padding_inches": 0.009722222222222222,
+    "banded_rows": true,
+    "band_color": "#F7F7F7",
+    "header_color": "#EAEAEA",
+    "row_bottom_border": {
+      "enabled": false,
+      "weight_pt": 0.5,
+      "color": "#CCCCCC"
+    }
+  },
+  "write_in": {
+    "inline_short_answers": true,
+    "inline_prompt_max_chars": 110,
+    "small_underscore_count": 20,
+    "large_lines": 3,
+    "large_line_spacing": 1.5,
+    "text_lines": 3,
+    "line_height_inches": 0.3
+  },
+  "pagination": {
+    "new_page_per_block": false,
+    "keep_questions_together": true,
+    "new_page_for_large_matrices": true,
+    "large_matrix_min_rows": 8,
+    "large_matrix_min_columns": 9,
+    "large_matrix_min_height_inches": 4.5
+  },
+  "question_overrides": {
+    "QID1": {
+      "_comment": "Q1 | MC/SAVR | Click to write the question text",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19": {
+      "_comment": "Q19 | MC/SAVR | Click to write the question text",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795623": {
+      "_comment": "Q1 | Matrix/Likert | Please rate how much you agree or disagree with the following statements regarding the system training:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795624": {
+      "_comment": "Q1 | MC/SAVR | Please indicate your sex:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795625": {
+      "_comment": "Q2 | MC/DL | Please select your age (years):",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795626": {
+      "_comment": "Q3 | MC/SAVR | Select your branch",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795627": {
+      "_comment": "Q4 | MC/SAVR | Select your component:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795628": {
+      "_comment": "Q5 | MC/SAVR | Select your rank category:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795629": {
+      "_comment": "Q6 | MC/DL | Select your rank grade:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795630": {
+      "_comment": "Q8 | TE/SL | Enter your primary MOS code:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795631": {
+      "_comment": "Q9 | MC/DL | How long have you served in the military? Select the total number of years, or select \"Less than one year\".",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795632": {
+      "_comment": "Q10 | MC/DL | [Less than one year of service] Enter your total months of service, under one year:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795633": {
+      "_comment": "Q11 | MC/SAVR | Have you been deployed?",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID19795634": {
+      "_comment": "Q12 | TE/SL | How many times have you been deployed?",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID2": {
+      "_comment": "Q15 | Matrix/Likert | Please rate your satisfaction with the following attributes overall: Select one response per row.",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID20": {
+      "_comment": "Q1 | DB/TB | This is a test of whether you can access the survey website. If you can read this, then you're in luck! Please continue to the next page to test a sample question.",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID21": {
+      "_comment": "Q21 | MC/SAVR | Click to write the question text",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID22": {
+      "_comment": "Q3.10 | Matrix/Likert | Please rate your Liking / Disliking of the following items: If you did not consume an item or are unsure, please select \"N/A\".",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": 0.35,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": true,
+          "weight_pt": 0.75,
+          "color": "#999999"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID4": {
+      "_comment": "Q4 | MC/SAVR | Click to write the question text",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID5": {
+      "_comment": "Q15 | Matrix/Likert | Please rate your satisfaction with the following attributes overall: Select one response per row.",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID6": {
+      "_comment": "Q15b | TE/FORM | Please describe why you were dissatisfied with the following attributes:",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    },
+    "QID7": {
+      "_comment": "Q7 | MC/SAVR | Click to write the question text",
+      "fonts": {
+        "family": "Arial",
+        "preserve_rich_text": true
+      },
+      "piped_text": {
+        "show": true
+      },
+      "questions": {
+        "font_size": 12,
+        "bold": true,
+        "numbering": "survey",
+        "blank_lines_before": 2,
+        "line_spacing": null,
+        "space_after_pt": 5,
+        "page_break_before": false
+      },
+      "responses": {
+        "font_size": 11,
+        "minimum_font_size": 8,
+        "symbol_size": 11,
+        "single_mark": "◯",
+        "multiple_mark": "☐",
+        "layout": "auto",
+        "multiple_columns_above": 10,
+        "max_columns": 2,
+        "short_label_max_chars": 30,
+        "max_rows": null,
+        "column_breaks_before": [],
+        "group_rank_grades": true,
+        "dropdown_mode": "auto",
+        "dropdown_write_in_at": 50,
+        "dropdown_numeric_write_in_at": 12,
+        "dropdown_max_columns": 3,
+        "row_height_inches": 0.25,
+        "field_row_height_inches": 0.34,
+        "form_preferred_row_height_inches": 0.45,
+        "large_list_banded_rows": true,
+        "indent_inches": 0.5
+      },
+      "tables": {
+        "line_spacing": 1,
+        "cell_padding_inches": null,
+        "banded_rows": false,
+        "band_color": "#F7F7F7",
+        "borders": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#D9D9D9"
+        },
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "matrix": {
+        "header_rotation": "auto",
+        "rotate_at_columns": 5,
+        "statement_font_size": null,
+        "minimum_statement_font_size": null,
+        "header_font_size": 10,
+        "minimum_header_font_size": 9,
+        "header_bold": true,
+        "header_max_height_inches": null,
+        "statement_column_width_inches": null,
+        "preferred_row_height_inches": null,
+        "minimum_row_height_inches": 0.2,
+        "maximum_row_height_inches": 0.45,
+        "line_spacing": 1.1,
+        "cell_padding_inches": 0.009722222222222222,
+        "banded_rows": true,
+        "band_color": "#F7F7F7",
+        "header_color": "#EAEAEA",
+        "row_bottom_border": {
+          "enabled": false,
+          "weight_pt": 0.5,
+          "color": "#CCCCCC"
+        }
+      },
+      "write_in": {
+        "inline_short_answers": true,
+        "inline_prompt_max_chars": 110,
+        "small_underscore_count": 20,
+        "large_lines": 3,
+        "large_line_spacing": 1.5,
+        "text_lines": 3,
+        "line_height_inches": 0.3
+      },
+      "pagination": {
+        "keep_questions_together": true,
+        "new_page_for_large_matrices": true,
+        "large_matrix_min_rows": 8,
+        "large_matrix_min_columns": 9,
+        "large_matrix_min_height_inches": 4.5
+      }
+    }
+  }
+}

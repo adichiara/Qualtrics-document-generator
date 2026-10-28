@@ -79,6 +79,15 @@ DEFAULT_CONFIG = {
 }
 
 
+def question_settings(config):
+    """Copy every supported per-question setting, excluding document geometry."""
+    result = {key: copy.deepcopy(config[key]) for key in
+              ("fonts", "piped_text", "questions", "responses", "tables", "matrix", "write_in", "pagination")}
+    result["fonts"] = {key: result["fonts"][key] for key in ("family", "preserve_rich_text")}
+    result["pagination"].pop("new_page_per_block")
+    return result
+
+
 def merge_config(base, patch):
     result = copy.deepcopy(base)
     for key, value in patch.items():
@@ -101,7 +110,7 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
         if key == "question_overrides":
             if not isinstance(value, dict):
                 raise ValueError("question_overrides must be an object keyed by QID.")
-            allowed = {k: DEFAULT_CONFIG[k] for k in ("fonts", "piped_text", "questions", "responses", "tables", "matrix", "write_in", "pagination")}
+            allowed = dict(question_settings(DEFAULT_CONFIG), _comment="")
             for qid, override in value.items():
                 if not qid or not isinstance(qid, str):
                     raise ValueError("Question override keys must be nonempty question IDs.")
@@ -112,6 +121,9 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
                 validate_patch(override, allowed, f"{name}.{qid}")
         elif isinstance(schema[key], dict):
             validate_patch(value, schema[key], name)
+        elif key == "_comment":
+            if not isinstance(value, str):
+                raise ValueError(f"{name} must be a string.")
         elif key == "column_breaks_before":
             if not isinstance(value, list):
                 raise ValueError(f"{name} must be a list of option positions or labels.")
@@ -1432,6 +1444,49 @@ def list_questions(qsf):
             print(f"{q.get('QuestionID', '')}\t{clean(q.get('DataExportTag', ''))}\t{flat(clean(q.get('QuestionText', '')))}")
 
 
+def export_survey_config(qsf, output=None, config=None):
+    """Write a reloadable snapshot of the configurable settings for every QID."""
+    qsf = Path(qsf)
+    output = Path(output) if output is not None else qsf.with_name(qsf.stem + "_config.json")
+    if output.resolve() == qsf.resolve():
+        raise ValueError("The exported config cannot overwrite the source QSF; choose a different path.")
+    data = json.loads(qsf.read_text(encoding="utf-8-sig"))
+    elements = data.get("SurveyElements") if isinstance(data, dict) else None
+    if not isinstance(elements, list):
+        raise ValueError("No SurveyElements array found; is this a QSF survey export?")
+    questions, warnings = {}, []
+    for element in elements:
+        if not isinstance(element, dict) or element.get("Element") != "SQ":
+            continue
+        q = element.get("Payload")
+        if not isinstance(q, dict) or not isinstance(q.get("QuestionID"), str) or not q["QuestionID"].strip():
+            warnings.append("Skipped a source question record without a stable question ID.")
+            continue
+        questions[q["QuestionID"]] = q
+    if not questions:
+        raise ValueError("No questions found in this QSF.")
+    resolved = resolve_config(config)
+    exported = copy.deepcopy(resolved)
+    exported["question_overrides"] = {}
+    for qid, q in questions.items():
+        override = resolved["question_overrides"].get(qid, {})
+        effective = merge_config(resolved, override)
+        tag = str(flat(clean(q.get("DataExportTag")))) or qid
+        kind = "/".join(str(q[key]) for key in ("QuestionType", "Selector") if q.get(key))
+        label = " | ".join(part for part in (tag, kind, str(flat(clean(q.get("QuestionText"))))) if part)
+        exported["question_overrides"][qid] = {
+            "_comment": override.get("_comment", label),
+            **question_settings(effective)
+        }
+    for qid in resolved["question_overrides"]:
+        if qid not in questions:
+            warnings.append(f"Question override {qid} does not match a question in this QSF and was not exported.")
+    # Validate before writing, so the generated file is accepted as a survey config.
+    resolve_config(exported)
+    output.write_text(json.dumps(exported, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    return output, len(questions), warnings
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("qsf", type=Path, nargs="?", help="Qualtrics .qsf export")
@@ -1439,8 +1494,11 @@ def main():
     ap.add_argument("--config", type=Path, help="Main JSON defaults (automatically uses config.json beside the script if omitted)")
     ap.add_argument("--survey-config", type=Path, help="Survey-specific JSON overrides layered over the main config")
     ap.add_argument("--set", action="append", default=[], metavar="SECTION.KEY=VALUE", help="Override any setting; repeat as needed. Values may be JSON or plain strings.")
-    ap.add_argument("--write-default-config", type=Path, metavar="PATH", help="Write all built-in defaults to JSON and exit")
-    ap.add_argument("--list-questions", action="store_true", help="List QSF question IDs, export tags, and prompts, then exit")
+    mode = ap.add_mutually_exclusive_group()
+    mode.add_argument("--write-default-config", type=Path, metavar="PATH", help="Write all built-in defaults to JSON and exit")
+    mode.add_argument("--list-questions", action="store_true", help="List QSF question IDs, export tags, and prompts, then exit")
+    mode.add_argument("--export-survey-config", nargs="?", const=True, type=Path, metavar="PATH",
+                      help="Export effective settings for every QID, then exit (default: <survey>_config.json)")
     ap.add_argument("--text-lines", type=int, help="Lines for long text answers")
     ap.add_argument("--use-export-tags", action="store_true", help="Number questions with Qualtrics export tags")
     ap.add_argument("--numbering", choices=["off", "sequential", "survey"])
@@ -1501,6 +1559,15 @@ def main():
             config_assignment(cli, "questions.numbering=survey")
         for assignment in args.set: config_assignment(cli, assignment)
         resolved = resolve_config(config, cli)
+        if args.export_survey_config is not None:
+            if args.output is not None:
+                raise ValueError("Use --export-survey-config PATH to name the JSON file; -o is for Word output.")
+            target = None if args.export_survey_config is True else args.export_survey_config
+            path, count, warnings = export_survey_config(args.qsf, target, resolved)
+            print(f"Wrote {path} ({count} question configurations).")
+            for warning in dict.fromkeys(config_warnings + warnings):
+                print("Review: " + warning, file=sys.stderr)
+            return
         output = args.output or args.qsf.with_name(args.qsf.stem + "-paper.docx")
         count, warnings = convert(args.qsf, output, config=resolved)
         warnings = config_warnings + warnings

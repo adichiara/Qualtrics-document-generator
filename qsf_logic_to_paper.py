@@ -174,7 +174,10 @@ def main():
     parser.add_argument("--numbering", choices=["sequential", "survey", "off"])
     parser.add_argument("--set", action="append", default=[], metavar="SECTION.KEY=VALUE")
     parser.add_argument("--report", type=Path, help="Save the analysis report as JSON")
-    parser.add_argument("--list-questions", action="store_true", help="List QSF question IDs, export tags, and prompts, then exit")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--list-questions", action="store_true", help="List QSF question IDs, export tags, and prompts, then exit")
+    mode.add_argument("--export-survey-config", nargs="?", const=True, type=Path, metavar="PATH",
+                      help="Export effective settings for every QID, then exit (default: <survey>_config.json)")
     piped = parser.add_mutually_exclusive_group()
     piped.add_argument("--show-piped-text", dest="show_piped_text", action="store_true", help="Show readable piped-text placeholders")
     piped.add_argument("--no-show-piped-text", dest="show_piped_text", action="store_false", help="Remove piped-text codes from displayed text")
@@ -193,6 +196,15 @@ def main():
         for assignment in args.set:
             formatter.config_assignment(cli, assignment)
         config = formatter.resolve_config(config, cli)
+        if args.export_survey_config is not None:
+            if args.output is not None or args.report is not None:
+                raise ValueError("Use --export-survey-config PATH to name the JSON file; -o and --report are conversion options.")
+            target = None if args.export_survey_config is True else args.export_survey_config
+            path, count, warnings = formatter.export_survey_config(args.qsf, target, config)
+            print("Wrote {} ({} question configurations).".format(path, count))
+            for warning in dict.fromkeys(config_warnings + warnings):
+                print("Review: " + warning, file=sys.stderr)
+            return 0
         output = args.output or args.qsf.with_name(args.qsf.stem + "-paper-logic.docx")
         count, warnings, report = convert_with_logic(args.qsf, output, config, args.report)
         print("Wrote {} ({} response questions; {} respondent instructions).".format(output, count, len(report["instructions"])))

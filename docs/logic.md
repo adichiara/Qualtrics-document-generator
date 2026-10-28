@@ -24,6 +24,8 @@ It loads the existing main and survey configs, supports `--set`, and makes routi
 
 The adapter follows `piped_text.show` for both survey wording and inserted respondent instructions. Piped-text codes appear as readable `{placeholders}` by default; use `--no-show-piped-text` or `--set piped_text.show=false` to remove them. Prompt anchors and response-cell matching use the same display text, so the option does not prevent supported skip instructions from being inserted. The analyzer's conditions and report retain their original source representation.
 
+For an editable settings snapshot of the source survey, run `python qsf_logic_to_paper.py survey.qsf --export-survey-config`. This writes `<survey>_config.json` with every QID's effective configurable values and informational `_comment` labels, then exits without generating a document or analyzing logic. Edit the file and load it using `--survey-config` for the next conversion. An optional path after `--export-survey-config` selects a different output file.
+
 ## Initial behavior
 
 - For a simple single-choice question controlling immediately following questions in the same block, instructions are attached to the relevant source response. If Q2 requires Yes to Q1, Q1's No response receives **Skip to Q3.**

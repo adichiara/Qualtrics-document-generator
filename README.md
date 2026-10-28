@@ -10,7 +10,7 @@ Dropdowns retain categorical choices such as military rank grades as multiple-ch
 
 Requires Python 3.8 or newer.
 
-[Download the current code and configuration](downloads/Qualtrics-document-generator-piped-text-20261028.zip).
+[Download the current code and configuration](downloads/Qualtrics-document-generator-survey-config-export-20261028.zip).
 
 ```bash
 pip install -r requirements.txt
@@ -30,6 +30,16 @@ python qsf_to_paper.py your-survey.qsf -o paper-survey.docx
 All defaults are built into the Python code. The optional `config.json` beside the script supplies your general preferences. A separate survey config can override those preferences and individual questions by their stable QID.
 
 For a complete copy-and-paste reference, see [all options with comments](examples/config_reference.jsonc) and the matching [runnable JSON config](examples/config_reference.json). The commented reference includes allowed values, units, defaults, and a complete per-question override template. The converters require standard JSON, so use the `.json` file directly; comments must be removed before using content copied from `.jsonc`.
+
+Export a ready-to-edit settings file for every question in your source survey, using the current defaults, config files, and CLI settings:
+
+```bash
+python qsf_logic_to_paper.py your-survey.qsf --export-survey-config
+# Edit your-survey_config.json, then regenerate:
+python qsf_logic_to_paper.py your-survey.qsf --survey-config your-survey_config.json
+```
+
+Both converters support `--export-survey-config [PATH]`. The JSON file includes every supported per-question setting, with `_comment` labels identifying the source questions; document-wide settings appear once at the top. Exporting does not generate Word/PDF or run the logic analyzer. Explicit question values override global values, so edit a question's value (or remove it to inherit) when experimenting. See the [exported example](examples/Example_survey_explicit_config.json).
 
 ```bash
 python qsf_to_paper.py your-survey.qsf --survey-config your-survey_config.json
@@ -87,6 +97,7 @@ python tests/test_block_sections.py
 python tests/test_dropdown_layout.py
 python tests/test_choice_columns.py
 python tests/test_piped_text.py
+python tests/test_survey_config_export.py
 ```
 
 The formatter preserves all non-trash questions it finds, including those absent from survey flow. Question types without a full paper equivalent produce a console warning for manual review. Very large matrices may span pages or become multiple column panels to retain their content.

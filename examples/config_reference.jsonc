@@ -19,6 +19,7 @@
 // Example: python qsf_logic_to_paper.py survey.qsf --config config_reference.json --survey-config survey_config.json
 // All keys also work with --set, e.g. --set responses.max_rows=10.
 // No JSON option enables respondent logic: choose qsf_logic_to_paper.py to include it.
+// For a survey-specific file containing every QID and its effective settings, use --export-survey-config.
 
 {
   // Typography; title/section sizes are document-wide.
@@ -237,9 +238,11 @@
   "question_overrides": {
     // Full copyable override template below (inactive because every line is commented).
     // Replace QID_REPLACE_ME with the QID from --list-questions; normally copy only the keys you need.
+    // _comment is optional human-readable information; it is accepted as JSON data and never printed.
     // Only fonts.family/fonts.preserve_rich_text are supported under fonts here.
     // page, sections, title/section font sizes, and pagination.new_page_per_block cannot be set per question.
     // "QID_REPLACE_ME": {
+    //   "_comment": "Optional note or question label; never printed",
     //   "fonts": {
     //     "family": "Arial",
     //     "preserve_rich_text": true
