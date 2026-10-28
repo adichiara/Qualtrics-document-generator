@@ -28,6 +28,7 @@ from docx.shared import Inches, Pt, RGBColor
 
 SINGLE_MARK = "◯"
 MULTIPLE_MARK = "☐"
+PIPED_TEXT_PATTERN = re.compile(r"\$\{([^{}]*)\}")
 
 
 # null means use the adaptive layout's existing default for that setting.
@@ -35,6 +36,7 @@ DEFAULT_CONFIG = {
     "fonts": {"family": "Arial", "title_size": 17, "section_size": 12,
               "preserve_rich_text": True},
     "sections": {"show_block_names": False},
+    "piped_text": {"show": True},
     "page": {"paper_size": "letter", "orientation": "portrait",
              "margin_top_inches": .7, "margin_bottom_inches": .7,
              "margin_left_inches": .8, "margin_right_inches": .8},
@@ -99,7 +101,7 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
         if key == "question_overrides":
             if not isinstance(value, dict):
                 raise ValueError("question_overrides must be an object keyed by QID.")
-            allowed = {k: DEFAULT_CONFIG[k] for k in ("fonts", "questions", "responses", "tables", "matrix", "write_in", "pagination")}
+            allowed = {k: DEFAULT_CONFIG[k] for k in ("fonts", "piped_text", "questions", "responses", "tables", "matrix", "write_in", "pagination")}
             for qid, override in value.items():
                 if not qid or not isinstance(qid, str):
                     raise ValueError("Question override keys must be nonempty question IDs.")
@@ -371,6 +373,52 @@ def clean(value):
     parser = HTMLText()
     parser.feed(str(value))
     return normalized_rich(parser.spans)
+
+
+def format_piped_text(value, show=True):
+    """Replace visible ${...} tokens without losing surrounding styled spans."""
+    text = str(value)
+    matches = list(PIPED_TEXT_PATTERN.finditer(text))
+    if not matches:
+        return value
+    spans, offset = [], 0
+    for part, style in getattr(value, "spans", [(text, {})]):
+        spans.append((offset, offset + len(part), part, style))
+        offset += len(part)
+    result = []
+
+    def copy_range(start, end):
+        for begin, finish, part, style in spans:
+            a, b = max(begin, start), min(finish, end)
+            if a < b:
+                result.append((part[a - begin:b - begin], style.copy()))
+
+    cursor = 0
+    for match in matches:
+        copy_range(cursor, match.start())
+        if show:
+            body = match[1].strip()
+            pipe = re.fullmatch(r"([\w-]+)://(.*)", body, flags=re.DOTALL)
+            label = body
+            if pipe:
+                scheme, path = pipe[1], pipe[2]
+                if scheme.lower() == "e" and path.lower().startswith("field/"):
+                    label = path[6:]
+                elif scheme.lower() == "q":
+                    label = path
+                else:
+                    label = f"{scheme}: {path}"
+            style = next((style for begin, finish, _, style in spans
+                          if begin <= match.start() < finish), {})
+            result.append(("{" + (label or body) + "}", style.copy()))
+        cursor = match.end()
+    copy_range(cursor, len(text))
+    return normalized_rich(result)
+
+
+def paper_text(value, settings):
+    """Read survey rich text, then apply the paper piped-text preference."""
+    return format_piped_text(clean(value), settings["piped_text"]["show"])
 
 
 def ordered(mapping, order):
@@ -1131,7 +1179,7 @@ class Writer:
             return
         qtype = str(q.get("QuestionType", ""))
         selector = str(q.get("Selector", ""))
-        prompt = clean(q.get("QuestionText"))
+        prompt = paper_text(q.get("QuestionText"), self.settings)
         cfg = self.settings["questions"]
         font = self.settings["fonts"]
         response = self.settings["responses"]
@@ -1166,7 +1214,7 @@ class Writer:
             return
         choices = ordered(q.get("Choices"), q.get("ChoiceOrder"))
         answers = ordered(q.get("Answers"), q.get("AnswerOrder"))
-        labels = [(clean(c), other_size(c)) for _, c in choices]
+        labels = [(paper_text(c, self.settings), other_size(c)) for _, c in choices]
         dropdown_write_in = qtype == "MC" and selector == "DL" and dropdown_uses_write_in(labels, response)
         short_write_in = write["inline_short_answers"] and ((qtype == 'TE' and selector == 'SL') or
                           dropdown_write_in) and len(prompt.split('\n')[0]) <= write["inline_prompt_max_chars"]
@@ -1202,7 +1250,7 @@ class Writer:
                              question_id=qid)
         elif qtype == "Matrix":
             multiple = selector.startswith("MA") or q.get("SubSelector") in {"MultipleAnswer", "MultiAnswer"}
-            self.grid([x for x, _ in labels], [clean(a) for _, a in answers], multiple,
+            self.grid([x for x, _ in labels], [paper_text(a, self.settings) for _, a in answers], multiple,
                       available_height=response_budget)
             # Word's keep-with-next behavior varies around large tables.
             # Explicitly start large matrix questions on a fresh page, above
@@ -1417,6 +1465,7 @@ def main():
     ap.add_argument("--matrix-row-border-weight", type=float, metavar="POINTS")
     toggle("new-page-per-block", "Start each later block on a fresh page")
     toggle("show-block-names", "Show survey block descriptions as section headings")
+    toggle("show-piped-text", "Show readable placeholders for piped text (on by default)")
     toggle("keep-questions-together", "Keep question prompts and response tables together where possible")
     args = ap.parse_args()
     try:
@@ -1441,6 +1490,7 @@ def main():
                      "blank_lines_before": "questions.blank_lines_before",
                      "new_page_per_block": "pagination.new_page_per_block",
                      "show_block_names": "sections.show_block_names",
+                     "show_piped_text": "piped_text.show",
                      "keep_questions_together": "pagination.keep_questions_together"}
         for arg, key in shortcuts.items():
             value = getattr(args, arg)

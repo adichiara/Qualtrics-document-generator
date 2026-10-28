@@ -22,6 +22,8 @@ The adapter uses the original converter to generate the form, then inserts instr
 
 It loads the existing main and survey configs, supports `--set`, and makes routing references follow per-question numbering overrides. Use `python qsf_logic_to_paper.py survey.qsf --list-questions` to print QIDs, export tags, and prompts without generating a document or report; this matches the original converter's listing command. Its CLI contains these core options; the original converter retains its full formatting CLI. PDF export remains a separate Word/LibreOffice operation.
 
+The adapter follows `piped_text.show` for both survey wording and inserted respondent instructions. Piped-text codes appear as readable `{placeholders}` by default; use `--no-show-piped-text` or `--set piped_text.show=false` to remove them. Prompt anchors and response-cell matching use the same display text, so the option does not prevent supported skip instructions from being inserted. The analyzer's conditions and report retain their original source representation.
+
 ## Initial behavior
 
 - For a simple single-choice question controlling immediately following questions in the same block, instructions are attached to the relevant source response. If Q2 requires Yes to Q1, Q1's No response receives **Skip to Q3.**

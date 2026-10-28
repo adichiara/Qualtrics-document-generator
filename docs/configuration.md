@@ -78,7 +78,39 @@ You can also change an override from the CLI:
 python qsf_to_paper.py survey.qsf --set question_overrides.QID22.matrix.header_rotation=always
 ```
 
-Question overrides support `questions`, `responses`, `tables`, `matrix`, `write_in`, and question-level `pagination` settings. Under `fonts`, they support `family` and `preserve_rich_text`. Paper dimensions, title/section sizes, `sections`, and `new_page_per_block` are document-wide settings.
+Question overrides support `questions`, `responses`, `tables`, `matrix`, `write_in`, `piped_text`, and question-level `pagination` settings. Under `fonts`, they support `family` and `preserve_rich_text`. Paper dimensions, title/section sizes, `sections`, and `new_page_per_block` are document-wide settings.
+
+## Piped text
+
+Piped text is shown by default as a readable placeholder. It is never evaluated or filled with a respondent's answers. For example, `${e://Field/Issued_Trouser_Size}` becomes `{Issued_Trouser_Size}`. Set `piped_text.show` to `false` to remove the code entirely for a paper form; surrounding text stays in place, with adjacent whitespace normalized. Ordinary `{braces}` are left unchanged.
+
+```json
+{
+  "piped_text": {"show": true}
+}
+```
+
+The setting applies to question text (including descriptive text), response choices, form labels, matrix statements/scale labels, and respondent instructions inserted by the optional logic adapter. Supported rich text around and within a code is preserved; when a code spans several styled runs, the placeholder inherits the style at its start. Source QSF files, question IDs, export tags, and logic conditions are unchanged. The standalone analyzer/report can retain the source codes; `--list-questions` also shows source text rather than applying document display settings.
+
+| Survey code | Displayed placeholder |
+|---|---|
+| `${e://Field/Issued_Trouser_Size}` | `{Issued_Trouser_Size}` |
+| `${q://QID12/ChoiceGroup/SelectedChoices}` | `{QID12/ChoiceGroup/SelectedChoices}` |
+| `${q://QID12/ChoiceTextEntryValue/3}` | `{QID12/ChoiceTextEntryValue/3}` |
+| `${lm://Field/1}` | `{lm: Field/1}` |
+
+Embedded-field codes use the field name. Question-response codes keep their source QID and path. Other `${...}` codes retain their scope and path inside braces, so they remain identifiable for review. Unclosed expressions are left as source text rather than guessed or truncated.
+
+Both converters accept the on/off CLI shortcuts and the existing `--set` syntax:
+
+```bash
+python qsf_to_paper.py survey.qsf --no-show-piped-text
+python qsf_logic_to_paper.py survey.qsf --show-piped-text
+python qsf_logic_to_paper.py survey.qsf --set piped_text.show=false
+python qsf_logic_to_paper.py survey.qsf --set question_overrides.QID12.piped_text.show=true
+```
+
+Main config, survey config, CLI, and per-question overrides follow the normal precedence rules; `--set` takes priority over the shortcut. Turning markers off may leave incomplete wording where an online question depended on a value; the converter does not invent replacement wording or answers.
 
 ## Block sections
 

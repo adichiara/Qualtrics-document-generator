@@ -8,6 +8,9 @@
   "sections": {
     "show_block_names": false
   },
+  "piped_text": {
+    "show": true
+  },
   "page": {
     "paper_size": "letter",
     "orientation": "portrait",

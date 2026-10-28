@@ -28,10 +28,8 @@ def add_instruction(doc, anchor, wording, settings, before=False):
     p.paragraph_format.line_spacing = 1
     p.paragraph_format.keep_together = True
     p.paragraph_format.keep_with_next = before
-    run = p.add_run(wording)
-    run.bold = True
-    run.font.name = settings["fonts"]["family"]
-    run.font.size = Pt(settings["responses"]["font_size"])
+    formatter.rich_runs(p, formatter.format_piped_text(wording, settings["piped_text"]["show"]),
+                        settings["responses"]["font_size"], font=settings["fonts"]["family"], force_bold=True)
     return p
 
 
@@ -77,7 +75,8 @@ def convert_with_logic(qsf, output, config=None, report_path=None):
         mode = modes[qid]
         tag = formatter.clean(q.get("DataExportTag")) if mode == "survey" else str(number)
         tag = tag or str(number)
-        first_line = str(formatter.clean(q.get("QuestionText"))).split("\n")[0]
+        settings = formatter.merge_config(config, config["question_overrides"].get(qid, {}))
+        first_line = str(formatter.paper_text(q.get("QuestionText"), settings)).split("\n")[0]
         prefix = ("{}.  ".format(tag) if mode != "off" and not is_description else "") + first_line
         if not prefix:
             continue
@@ -126,7 +125,7 @@ def convert_with_logic(qsf, output, config=None, report_path=None):
             continue
         nodes = response_elements(qid)
         if kind == "skip":
-            label = logic.text(formatter.clean(questions[qid].get("Choices", {}).get(instruction["choice_id"])))
+            label = logic.text(formatter.paper_text(questions[qid].get("Choices", {}).get(instruction["choice_id"]), settings))
             matching = []
             for node in nodes:
                 if node.tag == qn("w:tbl"):
@@ -139,10 +138,9 @@ def convert_with_logic(qsf, output, config=None, report_path=None):
                 cell = matching[0]
                 p = cell.paragraphs[0]
                 size = next((r.font.size for r in p.runs if r.font.size is not None), Pt(settings["responses"]["font_size"]))
-                run = p.add_run(" — " + instruction["text"])
-                run.bold = True
-                run.font.name = settings["fonts"]["family"]
-                run.font.size = size
+                wording = formatter.RichText([(" — ", {})]) + formatter.format_piped_text(instruction["text"], settings["piped_text"]["show"])
+                formatter.rich_runs(p, wording,
+                                    size.pt, font=settings["fonts"]["family"], force_bold=True)
                 p.paragraph_format.space_before = Pt(0)
                 p.paragraph_format.space_after = Pt(0)
                 continue
@@ -177,6 +175,10 @@ def main():
     parser.add_argument("--set", action="append", default=[], metavar="SECTION.KEY=VALUE")
     parser.add_argument("--report", type=Path, help="Save the analysis report as JSON")
     parser.add_argument("--list-questions", action="store_true", help="List QSF question IDs, export tags, and prompts, then exit")
+    piped = parser.add_mutually_exclusive_group()
+    piped.add_argument("--show-piped-text", dest="show_piped_text", action="store_true", help="Show readable piped-text placeholders")
+    piped.add_argument("--no-show-piped-text", dest="show_piped_text", action="store_false", help="Remove piped-text codes from displayed text")
+    parser.set_defaults(show_piped_text=None)
     args = parser.parse_args()
     try:
         if args.list_questions:
@@ -186,6 +188,8 @@ def main():
         cli = {}
         if args.numbering:
             formatter.config_assignment(cli, "questions.numbering=" + args.numbering)
+        if args.show_piped_text is not None:
+            formatter.config_assignment(cli, "piped_text.show=" + json.dumps(args.show_piped_text))
         for assignment in args.set:
             formatter.config_assignment(cli, assignment)
         config = formatter.resolve_config(config, cli)
