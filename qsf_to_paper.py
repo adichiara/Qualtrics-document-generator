@@ -45,7 +45,8 @@ DEFAULT_CONFIG = {
                   "single_mark": SINGLE_MARK, "multiple_mark": MULTIPLE_MARK,
                   "layout": "auto", "multiple_columns_above": 10,
                   "max_columns": 2, "short_label_max_chars": 30,
-                  "dropdown_write_in_at": 12, "row_height_inches": .25,
+                  "dropdown_mode": "auto", "dropdown_write_in_at": 50,
+                  "dropdown_max_columns": 3, "row_height_inches": .25,
                   "field_row_height_inches": .34,
                   "form_preferred_row_height_inches": .45,
                   "large_list_banded_rows": True, "indent_inches": .5},
@@ -87,6 +88,7 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
     enums = {"paper_size": {"letter", "a4", "legal"}, "orientation": {"portrait", "landscape"},
              "numbering": {"off", "sequential", "survey"},
              "header_rotation": {"auto", "always", "never"},
+             "dropdown_mode": {"auto", "choices", "write_in"},
              "layout": {"auto", "vertical", "horizontal"}}
     for key, value in patch.items():
         name = f"{path}.{key}" if path else key
@@ -128,7 +130,7 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
             if value < 0 or (not zero_allowed and value == 0):
                 raise ValueError(f"{name} must be {'nonnegative' if zero_allowed else 'positive'}.")
             integer_keys = {"blank_lines_before", "multiple_columns_above", "max_columns", "short_label_max_chars",
-                            "dropdown_write_in_at", "rotate_at_columns", "inline_prompt_max_chars",
+                            "dropdown_write_in_at", "dropdown_max_columns", "rotate_at_columns", "inline_prompt_max_chars",
                             "small_underscore_count", "large_lines", "text_lines", "large_matrix_min_rows", "large_matrix_min_columns"}
             if key in integer_keys and not isinstance(value, int):
                 raise ValueError(f"{name} must be an integer.")
@@ -482,6 +484,49 @@ def bottom_line(cell, weight=.5, color="999999"):
     borders.append(border)
 
 
+def is_ordered_choices(labels):
+    """Recognize numeric/unit sequences and military grades without sorting them.
+
+    A few nonnumeric endpoints (e.g. Other or Less than one year) are allowed.
+    This is deliberately label-based: an age prompt with a list of names is not
+    sufficient evidence that the choices are ordered.
+    """
+    if len(labels) < 3:
+        return False
+    units = {"year", "years", "yr", "yrs", "month", "months", "mo", "mos",
+             "day", "days", "week", "weeks", "hour", "hours", "minute", "minutes",
+             "foot", "feet", "ft", "inch", "inches", "in", "cm", "m", "mm",
+             "centimeter", "centimeters", "metre", "metres", "meter", "meters",
+             "kg", "g", "lb", "lbs", "pound", "pounds", "kilogram", "kilograms",
+             "to", "and", "or", "under", "over", "less", "more", "than",
+             "at", "least", "most", "up", "older", "younger", "above", "below"}
+    numeric, grades = [], []
+    for label, _ in labels:
+        value = str(flat(label)).lower().replace("\u2013", "-").replace("\u2014", "-")
+        numbers = re.findall(r"\d+(?:\.\d+)?", value)
+        words = re.findall(r"[a-z]+", value)
+        if numbers and all(word in units for word in words):
+            numeric.append(tuple(float(number) for number in numbers))
+        rank = re.search(r"\b(e|w|o|or|of)\s*-?\s*(\d{1,2})([a-z]?)\b", value)
+        if rank:
+            group = {"e": 0, "or": 0, "w": 1, "o": 2, "of": 2}[rank[1]]
+            grades.append((group, int(rank[2]), rank[3]))
+    for sequence in (numeric, grades):
+        if len(sequence) < max(3, math.ceil(len(labels) * .8)) or len(set(sequence)) < 3:
+            continue
+        if sequence == sorted(sequence) or sequence == sorted(sequence, reverse=True):
+            return True
+    return False
+
+
+def dropdown_uses_write_in(labels, settings):
+    """Apply an explicit dropdown mode, or retain short and ordered lists."""
+    mode = settings["dropdown_mode"]
+    if mode != "auto":
+        return mode == "write_in"
+    return len(labels) >= settings["dropdown_write_in_at"] and not is_ordered_choices(labels)
+
+
 def is_rating_scale(q, labels):
     """Recognize anchored rating scales; nominal choices remain vertical."""
     if len(labels) < 2 or len(labels) > 11 or any(other for _, other in labels):
@@ -758,7 +803,7 @@ class Writer:
                 bottom_line(answer)
             row.height = Inches(height)
 
-    def options(self, choices, multiple=False, rating=False):
+    def options(self, choices, multiple=False, rating=False, max_columns=None):
         choices = [(flat(label), other) for label, other in choices]
         cfg = self.settings["responses"]
         indent = cfg["indent_inches"]
@@ -783,9 +828,9 @@ class Writer:
             return
         max_length = max((len(label) for label, _ in choices), default=0)
         count = len(choices)
-        # Use two vertical columns only for long lists of short, plain labels.
+        # Read down each column, then continue at the top of the next column.
         split = count > cfg["multiple_columns_above"] and max_length <= cfg["short_label_max_chars"] and not any(other or "\n" in label for label, other in choices)
-        groups = min(cfg["max_columns"], max(1, math.ceil(count / max(1, cfg["multiple_columns_above"])))) if split else 1
+        groups = min(max_columns if max_columns is not None else cfg["max_columns"], max(1, math.ceil(count / max(1, cfg["multiple_columns_above"])))) if split else 1
         groups = min(groups, max(1, int(width / 1.2)))
         rows = math.ceil(count / groups)
         label_width = (width - (groups - 1) * .4) / groups - .3
@@ -1051,8 +1096,10 @@ class Writer:
             return
         choices = ordered(q.get("Choices"), q.get("ChoiceOrder"))
         answers = ordered(q.get("Answers"), q.get("AnswerOrder"))
+        labels = [(clean(c), other_size(c)) for _, c in choices]
+        dropdown_write_in = qtype == "MC" and selector == "DL" and dropdown_uses_write_in(labels, response)
         short_write_in = write["inline_short_answers"] and ((qtype == 'TE' and selector == 'SL') or
-                          (qtype == 'MC' and selector == 'DL' and len(choices) >= response["dropdown_write_in_at"])) and len(prompt.split('\n')[0]) <= write["inline_prompt_max_chars"]
+                          dropdown_write_in) and len(prompt.split('\n')[0]) <= write["inline_prompt_max_chars"]
         p = self.doc.add_paragraph()
         p.paragraph_format.space_before = Pt(0)
         p.paragraph_format.keep_with_next = True
@@ -1067,7 +1114,6 @@ class Writer:
         for run in p.runs:
             run.font.name = font["family"]
             run.font.size = Pt(cfg["font_size"])
-        labels = [(clean(c), other_size(c)) for _, c in choices]
         sec = self.doc.sections[0]
         page_height = (sec.page_height - sec.top_margin - sec.bottom_margin) / 914400 * 72
         prompt_height = estimated_lines((str(tag) + '. ' if cfg["numbering"] != "off" else '') + prompt, self.width, cfg["font_size"]) * cfg["font_size"] * (cfg["line_spacing"] or 1.25) + cfg["space_after_pt"]
@@ -1077,11 +1123,12 @@ class Writer:
         if short_write_in:
             pass
         elif qtype == "MC":
-            if selector == "DL" and len(labels) >= response["dropdown_write_in_at"]:
+            if dropdown_write_in:
                 self.lines(1, indent_inches=response["indent_inches"])
             else:
                 self.options(labels, selector.startswith("MA"),
-                             rating=not selector.startswith("MA") and is_rating_scale(q, labels))
+                             rating=not selector.startswith("MA") and is_rating_scale(q, labels),
+                             max_columns=response["dropdown_max_columns"] if selector == "DL" else None)
         elif qtype == "Matrix":
             multiple = selector.startswith("MA") or q.get("SubSelector") in {"MultipleAnswer", "MultiAnswer"}
             self.grid([x for x, _ in labels], [clean(a) for _, a in answers], multiple,

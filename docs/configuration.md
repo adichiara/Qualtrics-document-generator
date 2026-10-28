@@ -107,7 +107,7 @@ Both options also support `--set` and apply to the respondent-logic adapter. Whe
 | `fonts` | Font family, title and section sizes, and rich text preservation. Font sizes are points. |
 | `sections` | Show QSF block descriptions as section headings; off by default. |
 | `questions` | Prompt size, numbering, bold, blank lines before, line spacing, space after in points, and a forced page break before a particular question. Bold off preserves emphasis already present in the survey; bold on makes the entire prompt bold. |
-| `responses` | Label and symbol sizes, symbols, choice layout, long-list thresholds, dropdown write-in threshold, and minimum heights for response/field rows. `layout` is `auto`, `vertical`, or `horizontal`. Write-in choices stay vertical even if horizontal is requested. |
+| `responses` | Label and symbol sizes, symbols, choice layout, long-list thresholds, dropdown mode/write-in threshold/column limit, and minimum heights for response/field rows. `layout` is `auto`, `vertical`, or `horizontal`. Write-in choices stay vertical even if horizontal is requested. |
 | `tables` | General response-table spacing, padding, banding, full grid borders, and row bottom borders. |
 | `matrix` | Matrix-specific body spacing, padding, header size/rotation, statement size/width, row-height preferences, header fill, banding, and row bottom borders. Scale columns always have equal widths. |
 | `write_in` | Inline short answers, underscore count, large-field lines/spacing, long-answer line count, and handwriting row height. Qualtrics input size can increase the line count. |
@@ -129,6 +129,33 @@ python qsf_to_paper.py survey.qsf --set responses.indent_inches=0.5 --set respon
 ```
 
 All three settings support main JSON, survey JSON, CLI `--set`, and per-question overrides.
+
+## Dropdown lists
+
+Dropdowns use the same editable response tables, circles, indentation, label styling, and long-list banding as other single-choice questions. Short dropdowns stay vertical; genuine rating scales can still be horizontal. Long lists of short labels use multiple columns, filled down each column and then across, preserving the QSF choice order.
+
+```json
+{
+  "responses": {
+    "dropdown_mode": "auto",
+    "dropdown_write_in_at": 50,
+    "dropdown_max_columns": 3
+  }
+}
+```
+
+In `auto` mode, a dropdown becomes a write-in only when it reaches `dropdown_write_in_at` choices **and** its labels are not recognized as an ordered sequence. The new default threshold is 50, replacing 12. Numeric sequences, age ranges, heights with units, years/months of service, and military grade codes such as E-1/W-1/O-1 stay as choices even above that threshold. Recognition requires at least 80% of labels to form an ascending or descending numeric/unit or grade sequence, allowing a few special endpoints such as “Less than one year” or “Prefer not to answer.” Labels and source order are preserved; the converter does not sort them. Very long name lists remain write-ins. This detection is a heuristic; other ordered categories can be set explicitly.
+
+`dropdown_mode` accepts `auto`, `choices` (always show the options), and `write_in` (always provide a write-in). It is independent of `responses.layout`, which controls the arrangement of retained choices. `dropdown_max_columns` defaults to 3 for dropdowns only; other multiple-choice lists retain `responses.max_columns` (2). The existing `multiple_columns_above` and `short_label_max_chars` settings control when columns are appropriate. Long labels and choices with accompanying text fields remain a single vertical list. Setting either column limit to 1 prevents splitting for that question type.
+
+```bash
+python qsf_to_paper.py survey.qsf --set responses.dropdown_write_in_at=75
+python qsf_to_paper.py survey.qsf --set responses.dropdown_max_columns=2
+python qsf_to_paper.py survey.qsf --set question_overrides.QID12.responses.dropdown_mode=choices
+python qsf_logic_to_paper.py survey.qsf --set question_overrides.QID20.responses.dropdown_mode=write_in
+```
+
+All dropdown settings support the main config, survey config, CLI `--set`, and per-question overrides. An existing config that explicitly sets `dropdown_write_in_at` to 12 retains that threshold for unordered lists; update it to 50 for the new default. To reproduce the previous count-only behavior for a particular question, set its `dropdown_mode` to `write_in`. Extremely long retained lists may require more than one printed page; conversion still preserves every choice.
 
 Header rotation accepts `auto`, `always`, or `never`; automatic rotation uses `rotate_at_columns`. Rotated labels are flattened to remove source line breaks, then wrapped only when needed to fit. Turning rotation off on a matrix with many narrow columns may require smaller labels or a wider page.
 
