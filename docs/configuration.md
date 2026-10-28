@@ -2,6 +2,14 @@
 
 The converter runs locally with Python 3.8 or newer and `python-docx`. Existing commands still work. All defaults are built into the code. The supplied `config.json` also contains all defaults; keep it beside the Python script to customize your general preferences. JSON does not support comments.
 
+The [complete commented reference](../examples/config_reference.jsonc) documents every current option, its default, accepted values, and units, with a commented template containing all settings permitted in per-question overrides. The matching [standard JSON reference](../examples/config_reference.json) contains the same active default values and can be used directly. Neither activates example question overrides. The current loader does not accept JSONC: remove comments before copying into a runnable JSON file, or start with the standard JSON companion. Renaming `.jsonc` to `.json` does not remove comments.
+
+```bash
+python qsf_logic_to_paper.py survey.qsf --config examples/config_reference.json --survey-config survey_config.json
+```
+
+You can also copy the standard JSON file to `config.json` beside the scripts, or copy only the settings you want into a survey-specific config. Delete unneeded keys to inherit the lower-priority settings. All active values in both reference files match the built-in defaults.
+
 ```bash
 pip install python-docx
 python qsf_to_paper.py survey.qsf --survey-config surveyname_config.json

@@ -29,6 +29,8 @@ python qsf_to_paper.py your-survey.qsf -o paper-survey.docx
 
 All defaults are built into the Python code. The optional `config.json` beside the script supplies your general preferences. A separate survey config can override those preferences and individual questions by their stable QID.
 
+For a complete copy-and-paste reference, see [all options with comments](examples/config_reference.jsonc) and the matching [runnable JSON config](examples/config_reference.json). The commented reference includes allowed values, units, defaults, and a complete per-question override template. The converters require standard JSON, so use the `.json` file directly; comments must be removed before using content copied from `.jsonc`.
+
 ```bash
 python qsf_to_paper.py your-survey.qsf --survey-config your-survey_config.json
 python qsf_to_paper.py your-survey.qsf --response-font-size 10 --bold-questions

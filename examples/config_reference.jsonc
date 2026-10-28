@@ -1,0 +1,340 @@
+// QUALTRICS DOCUMENT GENERATOR - COMPLETE CONFIGURATION REFERENCE
+// Every currently supported setting is present below with its built-in default value.
+// This is an annotated JSONC reference. The current converters require standard JSON:
+// use config_reference.json directly, or remove the comments before using this file as config.json.
+// Renaming .jsonc to .json does not remove comments.
+//
+// UNITS: font/border sizes and *_pt use points; dimensions/margins/padding use inches.
+// Line spacing is a multiplier. Count/column/row/character settings require integers.
+// Fonts: 4-72 pt; readable minimum must be <= preferred size. Border weights: 0.25-12 pt.
+// Colors: six hex digits, with or without #. true/false and null are lowercase JSON values.
+// null means inherit/adapt and is accepted only for settings shown as null below.
+// Page margins must leave >= 2 inches of printable width/height; response indentation
+// must leave >= 1.2 inches for the choice table. Heights/widths are layout preferences
+// where necessary to preserve all survey content; formatting pressure does not stop conversion.
+//
+// PRIORITY: code defaults -> main config -> survey config -> CLI -> per-question overrides.
+// Omitted keys inherit; object keys merge recursively; arrays replace rather than append.
+// Main config.json is loaded beside qsf_to_paper.py. A survey config must be selected explicitly.
+// Example: python qsf_logic_to_paper.py survey.qsf --config config_reference.json --survey-config survey_config.json
+// All keys also work with --set, e.g. --set responses.max_rows=10.
+// No JSON option enables respondent logic: choose qsf_logic_to_paper.py to include it.
+
+{
+  // Typography; title/section sizes are document-wide.
+  "fonts": {
+    // Font family used throughout the document.
+    "family": "Arial",
+    // Survey title size in points; document-wide.
+    "title_size": 17,
+    // Block heading size in points, when block names are shown; document-wide.
+    "section_size": 12,
+    // Keep supported source bold, italic, underline, color, etc. Source font sizes are normalized for print.
+    "preserve_rich_text": true
+  },
+
+  // Survey block headings; document-wide.
+  "sections": {
+    // Show QSF block descriptions as headings. Generic Default Question Block labels stay hidden.
+    "show_block_names": false
+  },
+
+  // Readable piped-text placeholders, not resolved online values.
+  "piped_text": {
+    // true: ${e://Field/Size} becomes {Size}; false: remove the code. Values are never resolved.
+    "show": true
+  },
+
+  // Paper geometry; document-wide.
+  "page": {
+    // Allowed: "letter", "a4", "legal". Document-wide.
+    "paper_size": "letter",
+    // Allowed: "portrait", "landscape". Document-wide.
+    "orientation": "portrait",
+    // Top page margin in inches; zero is allowed.
+    "margin_top_inches": 0.7,
+    // Bottom page margin in inches; zero is allowed.
+    "margin_bottom_inches": 0.7,
+    // Left page margin in inches; response indentation is added inside this margin.
+    "margin_left_inches": 0.8,
+    // Right page margin in inches.
+    "margin_right_inches": 0.8
+  },
+
+  // Question prompt appearance and numbering.
+  "questions": {
+    // Question text size in points; 12 is the preferred default.
+    "font_size": 12,
+    // true makes the entire question bold. false preserves any bold already in the survey.
+    "bold": false,
+    // Allowed: "off", "sequential", "survey". survey uses DataExportTag, falling back to the sequence number.
+    "numbering": "sequential",
+    // Number of blank lines before each question; integer >= 0.
+    "blank_lines_before": 2,
+    // Line-spacing multiple, e.g. 1 or 1.15; null inherits the Word paragraph style.
+    "line_spacing": null,
+    // Space after a question paragraph in points; zero is allowed.
+    "space_after_pt": 5,
+    // Force a fresh page before the question. Usually set per question; true here applies to every question.
+    "page_break_before": false
+  },
+
+  // Multiple-choice, dropdown, form, and rank response appearance.
+  "responses": {
+    // Preferred label font size in points; one consistent size is selected for all options in a question.
+    "font_size": 11,
+    // Lowest response-label size allowed when fitting choices; must not exceed font_size.
+    "minimum_font_size": 8,
+    // Circle/checkbox font size in points.
+    "symbol_size": 11,
+    // Mark for single-choice responses (circle, Unicode U+25EF). Any nonempty text symbol is allowed.
+    "single_mark": "◯",
+    // Mark for select-all responses (checkbox, Unicode U+2610).
+    "multiple_mark": "☐",
+    // Allowed: "auto", "vertical", "horizontal". auto keeps ordinary choices vertical and genuine ratings horizontal.
+    "layout": "auto",
+    // Automatic columns and long-list banding apply ABOVE this option count (not at it). Integer >= 0.
+    "multiple_columns_above": 10,
+    // Usual automatic column limit for non-dropdown choices. Rank grouping, manual breaks, and row caps can override it.
+    "max_columns": 2,
+    // Automatic columns normally require every label to be no longer than this many characters.
+    "short_label_max_chars": 30,
+    // Maximum options per vertical column; positive integer, or null for no explicit cap. Does not count wrapped lines or matrix rows.
+    "max_rows": null,
+    // Manual new-column starts: [10, 15] (1-based positions) or ["WO-1", "O-1"] (exact labels). [] restores automatic breaks.
+    "column_breaks_before": [],
+    // Automatically separate E, W/WO/CWO, and O grade families into columns, regardless of QID. Manual breaks take priority.
+    "group_rank_grades": true,
+    // Allowed: "auto", "choices", "write_in". The last two force a dropdown to retain choices or become a write-in.
+    "dropdown_mode": "auto",
+    // In auto mode, unordered/category lists such as names become write-ins AT this count. Recognized grades remain choices.
+    "dropdown_write_in_at": 50,
+    // In auto mode, ordered numeric/unit ranges (age, height, years of service, etc.) become write-ins AT this count.
+    "dropdown_numeric_write_in_at": 12,
+    // Usual automatic column limit for retained dropdown choices; separate from max_columns.
+    "dropdown_max_columns": 3,
+    // Minimum height of ordinary choice-table rows in inches; wrapped content can increase it.
+    "row_height_inches": 0.25,
+    // Minimum form/rank/field row height in inches; baseline handwriting space.
+    "field_row_height_inches": 0.34,
+    // Text-entry FORM rows grow toward this height when estimated remaining page space permits.
+    "form_preferred_row_height_inches": 0.45,
+    // Shade long multiple-choice lists automatically, even when tables.banded_rows is false; uses tables.band_color.
+    "large_list_banded_rows": true,
+    // Left indentation for multiple-choice tables inside the text margin. 0 is flush left; matrix/form tables stay at the text margin.
+    "indent_inches": 0.5
+  },
+
+  // General response tables and full-grid borders.
+  "tables": {
+    // Paragraph line-spacing multiple for general response tables. Table paragraph spacing before/after is always zero.
+    "line_spacing": 1,
+    // Cell padding on all sides in inches; null leaves the existing Word defaults. 0 is allowed.
+    "cell_padding_inches": null,
+    // General response-table banding. Independent of automatic long-list banding and matrix banding.
+    "banded_rows": false,
+    // Alternating row fill; six-digit hex color. Also used for automatic long-choice-list banding.
+    "band_color": "#F7F7F7",
+    "borders": {
+      // Full grid borders for all response tables, including matrices. Independent of row-bottom borders and banding.
+      "enabled": false,
+      // Grid border thickness in points; allowed range 0.25 to 12.
+      "weight_pt": 0.5,
+      // Grid border color; six-digit hex color.
+      "color": "#D9D9D9"
+    },
+    "row_bottom_border": {
+      // Bottom border on general response rows. Can be combined with banding or used by itself.
+      "enabled": false,
+      // General row-bottom border thickness in points; 0.25 to 12.
+      "weight_pt": 0.5,
+      // General row-bottom border color; six-digit hex color.
+      "color": "#CCCCCC"
+    }
+  },
+
+  // Matrix statements, scale headers, and matrix-specific decoration.
+  "matrix": {
+    // Allowed: "auto", "always", "never". Rotated scale labels use 90 degrees counterclockwise.
+    "header_rotation": "auto",
+    // In auto rotation mode, rotate when scale-column count is AT LEAST this number. Excludes the statement column.
+    "rotate_at_columns": 5,
+    // Preferred statement-label size in points; null uses responses.font_size.
+    "statement_font_size": null,
+    // Minimum statement-label size; null uses responses.minimum_font_size.
+    "minimum_statement_font_size": null,
+    // Preferred scale-label size in points.
+    "header_font_size": 10,
+    // Minimum scale-label size before further wrapping/fallback; must not exceed header_font_size.
+    "minimum_header_font_size": 9,
+    // Apply bold to matrix scale headers (including the first header cell when it has text).
+    "header_bold": true,
+    // Preferred header-height limit; null adapts (about 1.6 inches for 9+ scale columns, otherwise 1.75). Can expand to preserve content.
+    "header_max_height_inches": null,
+    // Preferred width of the left statement column; null chooses adaptively. Scale columns share the remaining width equally.
+    "statement_column_width_inches": null,
+    // Preferred uniform statement-row height; null selects adaptively. Does not control the separate header row.
+    "preferred_row_height_inches": null,
+    // Minimum statement-row height in inches; must not exceed maximum_row_height_inches.
+    "minimum_row_height_inches": 0.2,
+    // Preferred maximum statement-row height in inches. May be exceeded to avoid clipping or losing content.
+    "maximum_row_height_inches": 0.45,
+    // Line-spacing multiple for matrix body labels and scale headers.
+    "line_spacing": 1.1,
+    // Matrix cell padding in inches; this default equals 14 twips. 0 removes the additional padding; null is not accepted.
+    "cell_padding_inches": 0.009722222222222222,
+    // Shade alternating matrix statement rows; independent of row-bottom borders and general table banding.
+    "banded_rows": true,
+    // Matrix alternating-row fill; six-digit hex color.
+    "band_color": "#F7F7F7",
+    // Matrix header fill; six-digit hex color.
+    "header_color": "#EAEAEA",
+    "row_bottom_border": {
+      // Bottom border on matrix statement rows; independent of matrix banding.
+      "enabled": false,
+      // Matrix row-bottom border thickness in points; 0.25 to 12.
+      "weight_pt": 0.5,
+      // Matrix row-bottom border color; six-digit hex color.
+      "color": "#CCCCCC"
+    }
+  },
+
+  // Handwriting lines and text-entry sizing.
+  "write_in": {
+    // Put short single-line answers or converted dropdown write-ins beside the prompt when space permits.
+    "inline_short_answers": true,
+    // Maximum character count of the first prompt line for an inline answer; longer prompts use a response table.
+    "inline_prompt_max_chars": 110,
+    // Underscore count for small inline write-ins, including Other/specify fields.
+    "small_underscore_count": 20,
+    // Number of lines for a large write-in attached to a response option; medium fields use available response-cell width.
+    "large_lines": 3,
+    // Paragraph line-spacing multiple for large write-ins attached to response options.
+    "large_line_spacing": 1.5,
+    // Base number of lines for long text-entry answers. Source input height and essay type may increase the line count.
+    "text_lines": 3,
+    // Minimum row height of standalone handwriting-line tables in inches.
+    "line_height_inches": 0.3
+  },
+
+  // Block/question pagination and fresh-page thresholds for matrices. QSF page breaks are ignored.
+  "pagination": {
+    // Start each later nonempty block on a fresh page, independently of heading visibility; no extra break for the first block.
+    "new_page_per_block": false,
+    // Keep question text and responses together where possible. Oversized content may still span pages.
+    "keep_questions_together": true,
+    // Start large matrix questions on a fresh page when any of the following thresholds is met.
+    "new_page_for_large_matrices": true,
+    // Large-matrix threshold: statement count >= this integer. Excludes the scale-header row.
+    "large_matrix_min_rows": 8,
+    // Large-matrix threshold: scale-column count >= this integer. Excludes the left statement column.
+    "large_matrix_min_columns": 9,
+    // Large-matrix threshold: estimated combined matrix-table height >= this value in inches.
+    "large_matrix_min_height_inches": 4.5
+  },
+
+  // Per-question settings keyed by stable QID. Leave {} for no overrides. Copy only the settings you want to change.
+  "question_overrides": {
+    // Full copyable override template below (inactive because every line is commented).
+    // Replace QID_REPLACE_ME with the QID from --list-questions; normally copy only the keys you need.
+    // Only fonts.family/fonts.preserve_rich_text are supported under fonts here.
+    // page, sections, title/section font sizes, and pagination.new_page_per_block cannot be set per question.
+    // "QID_REPLACE_ME": {
+    //   "fonts": {
+    //     "family": "Arial",
+    //     "preserve_rich_text": true
+    //   },
+    //   "piped_text": {
+    //     "show": true
+    //   },
+    //   "questions": {
+    //     "font_size": 12,
+    //     "bold": false,
+    //     "numbering": "sequential",
+    //     "blank_lines_before": 2,
+    //     "line_spacing": null,
+    //     "space_after_pt": 5,
+    //     "page_break_before": false
+    //   },
+    //   "responses": {
+    //     "font_size": 11,
+    //     "minimum_font_size": 8,
+    //     "symbol_size": 11,
+    //     "single_mark": "◯",
+    //     "multiple_mark": "☐",
+    //     "layout": "auto",
+    //     "multiple_columns_above": 10,
+    //     "max_columns": 2,
+    //     "short_label_max_chars": 30,
+    //     "max_rows": null,
+    //     "column_breaks_before": [],
+    //     "group_rank_grades": true,
+    //     "dropdown_mode": "auto",
+    //     "dropdown_write_in_at": 50,
+    //     "dropdown_numeric_write_in_at": 12,
+    //     "dropdown_max_columns": 3,
+    //     "row_height_inches": 0.25,
+    //     "field_row_height_inches": 0.34,
+    //     "form_preferred_row_height_inches": 0.45,
+    //     "large_list_banded_rows": true,
+    //     "indent_inches": 0.5
+    //   },
+    //   "tables": {
+    //     "line_spacing": 1,
+    //     "cell_padding_inches": null,
+    //     "banded_rows": false,
+    //     "band_color": "#F7F7F7",
+    //     "borders": {
+    //       "enabled": false,
+    //       "weight_pt": 0.5,
+    //       "color": "#D9D9D9"
+    //     },
+    //     "row_bottom_border": {
+    //       "enabled": false,
+    //       "weight_pt": 0.5,
+    //       "color": "#CCCCCC"
+    //     }
+    //   },
+    //   "matrix": {
+    //     "header_rotation": "auto",
+    //     "rotate_at_columns": 5,
+    //     "statement_font_size": null,
+    //     "minimum_statement_font_size": null,
+    //     "header_font_size": 10,
+    //     "minimum_header_font_size": 9,
+    //     "header_bold": true,
+    //     "header_max_height_inches": null,
+    //     "statement_column_width_inches": null,
+    //     "preferred_row_height_inches": null,
+    //     "minimum_row_height_inches": 0.2,
+    //     "maximum_row_height_inches": 0.45,
+    //     "line_spacing": 1.1,
+    //     "cell_padding_inches": 0.009722222222222222,
+    //     "banded_rows": true,
+    //     "band_color": "#F7F7F7",
+    //     "header_color": "#EAEAEA",
+    //     "row_bottom_border": {
+    //       "enabled": false,
+    //       "weight_pt": 0.5,
+    //       "color": "#CCCCCC"
+    //     }
+    //   },
+    //   "write_in": {
+    //     "inline_short_answers": true,
+    //     "inline_prompt_max_chars": 110,
+    //     "small_underscore_count": 20,
+    //     "large_lines": 3,
+    //     "large_line_spacing": 1.5,
+    //     "text_lines": 3,
+    //     "line_height_inches": 0.3
+    //   },
+    //   "pagination": {
+    //     "keep_questions_together": true,
+    //     "new_page_for_large_matrices": true,
+    //     "large_matrix_min_rows": 8,
+    //     "large_matrix_min_columns": 9,
+    //     "large_matrix_min_height_inches": 4.5
+    //   }
+    // }
+  }
+}
