@@ -4,13 +4,13 @@ Convert a Qualtrics `.qsf` survey export into an editable Word document for coll
 
 The converter preserves survey wording and supported rich text formatting, creates editable response tables, and adapts pagination for print. Matrix questions use statement rows, equal-width scale columns, and optional rotated headers. Online page breaks are ignored. Block headings and fresh pages for later blocks are independent options, both off by default.
 
-Dropdowns now retain short lists and recognized ordered lists (such as age, height, years of service, and military rank grades) as multiple-choice response tables. Long lists of short labels can use up to three columns, read down each column in survey order. Unordered dropdowns with 50 or more choices become write-ins by default. Configure the threshold, column limit, or `responses.dropdown_mode` (`auto`, `choices`, or `write_in`), including per-question overrides.
+Dropdowns retain categorical choices such as military rank grades as multiple-choice response tables. Long lists of short labels can use up to three columns, read down each column in survey order. Numeric ranges (such as age, height, and years of service) become write-ins at 12 choices by default; unordered lists such as names become write-ins at 50 choices. Configure either threshold, the column limit, or `responses.dropdown_mode` (`auto`, `choices`, or `write_in`), including per-question overrides.
 
 ## Run locally
 
 Requires Python 3.8 or newer.
 
-[Download the current code and configuration](downloads/Qualtrics-document-generator-dropdown-options-20261028.zip).
+[Download the current code and configuration](downloads/Qualtrics-document-generator-dropdown-categories-20261028.zip).
 
 ```bash
 pip install -r requirements.txt

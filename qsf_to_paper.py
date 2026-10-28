@@ -46,6 +46,7 @@ DEFAULT_CONFIG = {
                   "layout": "auto", "multiple_columns_above": 10,
                   "max_columns": 2, "short_label_max_chars": 30,
                   "dropdown_mode": "auto", "dropdown_write_in_at": 50,
+                  "dropdown_numeric_write_in_at": 12,
                   "dropdown_max_columns": 3, "row_height_inches": .25,
                   "field_row_height_inches": .34,
                   "form_preferred_row_height_inches": .45,
@@ -130,7 +131,7 @@ def validate_patch(patch, schema=DEFAULT_CONFIG, path=""):
             if value < 0 or (not zero_allowed and value == 0):
                 raise ValueError(f"{name} must be {'nonnegative' if zero_allowed else 'positive'}.")
             integer_keys = {"blank_lines_before", "multiple_columns_above", "max_columns", "short_label_max_chars",
-                            "dropdown_write_in_at", "dropdown_max_columns", "rotate_at_columns", "inline_prompt_max_chars",
+                            "dropdown_write_in_at", "dropdown_numeric_write_in_at", "dropdown_max_columns", "rotate_at_columns", "inline_prompt_max_chars",
                             "small_underscore_count", "large_lines", "text_lines", "large_matrix_min_rows", "large_matrix_min_columns"}
             if key in integer_keys and not isinstance(value, int):
                 raise ValueError(f"{name} must be an integer.")
@@ -484,15 +485,15 @@ def bottom_line(cell, weight=.5, color="999999"):
     borders.append(border)
 
 
-def is_ordered_choices(labels):
-    """Recognize numeric/unit sequences and military grades without sorting them.
+def ordered_choice_kind(labels):
+    """Distinguish numeric/unit ranges from military grades without sorting them.
 
     A few nonnumeric endpoints (e.g. Other or Less than one year) are allowed.
     This is deliberately label-based: an age prompt with a list of names is not
     sufficient evidence that the choices are ordered.
     """
     if len(labels) < 3:
-        return False
+        return None
     units = {"year", "years", "yr", "yrs", "month", "months", "mo", "mos",
              "day", "days", "week", "weeks", "hour", "hours", "minute", "minutes",
              "foot", "feet", "ft", "inch", "inches", "in", "cm", "m", "mm",
@@ -511,20 +512,26 @@ def is_ordered_choices(labels):
         if rank:
             group = {"e": 0, "or": 0, "w": 1, "o": 2, "of": 2}[rank[1]]
             grades.append((group, int(rank[2]), rank[3]))
-    for sequence in (numeric, grades):
+    # Grade codes such as OR-1 are categories even though they contain numbers.
+    for kind, sequence in (("grade", grades), ("numeric", numeric)):
         if len(sequence) < max(3, math.ceil(len(labels) * .8)) or len(set(sequence)) < 3:
             continue
         if sequence == sorted(sequence) or sequence == sorted(sequence, reverse=True):
-            return True
-    return False
+            return kind
+    return None
 
 
 def dropdown_uses_write_in(labels, settings):
-    """Apply an explicit dropdown mode, or retain short and ordered lists."""
+    """Keep categories as choices; use write-ins for long numeric/name lists."""
     mode = settings["dropdown_mode"]
     if mode != "auto":
         return mode == "write_in"
-    return len(labels) >= settings["dropdown_write_in_at"] and not is_ordered_choices(labels)
+    kind = ordered_choice_kind(labels)
+    if kind == "grade":
+        return False
+    if kind == "numeric":
+        return len(labels) >= settings["dropdown_numeric_write_in_at"]
+    return len(labels) >= settings["dropdown_write_in_at"]
 
 
 def is_rating_scale(q, labels):

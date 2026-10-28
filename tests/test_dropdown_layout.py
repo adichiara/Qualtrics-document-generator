@@ -63,18 +63,24 @@ class DropdownLayoutTests(unittest.TestCase):
             ["{} ft {} in".format(i // 12, i % 12) for i in range(48, 121)],
             ["{}' {}\"".format(i // 12, i % 12) for i in range(48, 121)],
             ["{} lb".format(i) for i in range(100, 171)],
-            ["E-{}".format(i) for i in range(1, 10)] + ["W-{}".format(i) for i in range(1, 6)] + ["O-{}".format(i) for i in range(1, 11)],
             [str(i) for i in range(99, 17, -1)] + ["Prefer not to answer"]
         ]
         for labels in sequences:
             with self.subTest(first=labels[0]):
-                self.assert_choices(labels, groups=3)
+                self.assertEqual(formatter.ordered_choice_kind([(label, False) for label in labels]), "numeric")
+                self.assertFalse(self.writer(labels).doc.tables)
+        ranks = ["E-{}".format(i) for i in range(1, 10)] + ["W-{}".format(i) for i in range(1, 6)] + ["O-{}".format(i) for i in range(1, 11)]
+        self.assert_choices(ranks, groups=3)
+        self.assert_choices(["OR-{}".format(i) for i in range(1, 61)], groups=3)
+        self.assert_choices([str(i) for i in range(11)], groups=2)
+        self.assertFalse(self.writer([str(i) for i in range(12)]).doc.tables)
+        self.assert_choices([str(i) for i in range(19)], {"responses": {"dropdown_numeric_write_in_at": 20}}, groups=2)
 
     def test_names_and_unsorted_identifiers_are_not_ordered(self):
         for labels in (["Person {:02d}".format(i) for i in range(60)],
                        ["{:02d} John Smith".format(i) for i in range(60)],
                        [str(i) for i in range(0, 60, 2)] + [str(i) for i in range(1, 60, 2)]):
-            self.assertFalse(formatter.is_ordered_choices([(label, False) for label in labels]))
+            self.assertIsNone(formatter.ordered_choice_kind([(label, False) for label in labels]))
             writer = self.writer(labels)
             self.assertFalse(writer.doc.tables)
         writer = self.writer(["Person {:02d}".format(i) for i in range(60)],
@@ -88,7 +94,7 @@ class DropdownLayoutTests(unittest.TestCase):
         names = ["Person {:02d}".format(i) for i in range(60)]
         self.assert_choices(names, {"responses": {"dropdown_mode": "choices", "dropdown_max_columns": 2}}, groups=2)
         self.assert_choices(names, {"responses": {"dropdown_write_in_at": 75}}, groups=3)
-        self.assert_choices([str(i) for i in range(60)], {"responses": {"dropdown_max_columns": 1}}, groups=1)
+        self.assert_choices([str(i) for i in range(60)], {"responses": {"dropdown_mode": "choices", "dropdown_max_columns": 1}}, groups=1)
         writer = self.writer(["Yes", "No"], {"responses": {"dropdown_mode": "write_in"}})
         self.assertFalse(writer.doc.tables)
         writer = self.writer(names, {"question_overrides": {"QID1": {"responses": {"dropdown_mode": "choices"}}}})
@@ -104,7 +110,7 @@ class DropdownLayoutTests(unittest.TestCase):
         labels = [str(i) for i in range(18, 78)]
         q = question(labels)
         q["ChoiceOrder"] = list(reversed(list(q["Choices"])))
-        writer = formatter.Writer("Order check")
+        writer = formatter.Writer("Order check", config={"responses": {"dropdown_mode": "choices"}})
         writer.question("QID1", q)
         self.assertEqual(table_labels(writer.doc.tables[0]), list(reversed(labels)))
         table = writer.doc.tables[0]
@@ -118,7 +124,7 @@ class DropdownLayoutTests(unittest.TestCase):
         writer.question("QID2", q)
         self.assertEqual(len(writer.doc.tables[-1].columns), 2)
 
-    def test_real_dropdowns_retain_every_exported_choice(self):
+    def test_real_dropdowns_keep_grades_and_use_numeric_write_ins(self):
         data = json.loads((ROOT / "examples/FY27_MRE_IOTE.qsf").read_text(encoding="utf-8-sig"))
         writer = formatter.Writer("MRE dropdown checks")
         count = 0
@@ -126,14 +132,21 @@ class DropdownLayoutTests(unittest.TestCase):
             q = element.get("Payload", {})
             if element.get("Element") != "SQ" or not isinstance(q, dict) or q.get("Selector") != "DL":
                 continue
+            before = len(writer.doc.tables)
             writer.question(q["QuestionID"], q)
             expected = [str(formatter.flat(formatter.clean(choice))) for _, choice in formatter.ordered(q["Choices"], q.get("ChoiceOrder"))]
-            self.assertEqual(table_labels(writer.doc.tables[-1]), expected)
+            if q["QuestionID"] == "QID19789337":
+                self.assertEqual(len(writer.doc.tables), before + 1)
+                self.assertEqual(table_labels(writer.doc.tables[-1]), expected)
+            else:
+                self.assertEqual(len(writer.doc.tables), before)
+                self.assertIn("_" * 20, writer.doc.paragraphs[-1].text)
             count += 1
         self.assertEqual(count, 4)
 
     def test_config_validation_and_cli(self):
-        for patch in ({"dropdown_mode": "unknown"}, {"dropdown_max_columns": 0}, {"dropdown_max_columns": 2.5}):
+        for patch in ({"dropdown_mode": "unknown"}, {"dropdown_max_columns": 0}, {"dropdown_max_columns": 2.5},
+                      {"dropdown_numeric_write_in_at": 0}, {"dropdown_numeric_write_in_at": 12.5}):
             with self.assertRaises(ValueError):
                 formatter.resolve_config({"responses": patch})
         self.assertEqual(json.loads((ROOT / "config.json").read_text()), formatter.DEFAULT_CONFIG)
@@ -151,7 +164,8 @@ class DropdownLayoutTests(unittest.TestCase):
             count, warnings, report = adapter.convert_with_logic(ROOT / "examples/FY27_MRE_IOTE.qsf", out)
             self.assertEqual(count, 44)
             doc = Document(out)
-            self.assertTrue(any(table_labels(t) == [str(i) for i in range(18, 63)]
+            ranks = ["E-{}".format(i) for i in range(1, 10)] + ["W-{}".format(i) for i in range(1, 6)] + ["O-{}".format(i) for i in range(1, 11)]
+            self.assertTrue(any(table_labels(t) == ranks
                                 for t in doc.tables if len(t.columns) == 8))
             self.assertTrue(any("Less than one year" in p.text and "skip to Q9" in p.text for p in doc.paragraphs))
 

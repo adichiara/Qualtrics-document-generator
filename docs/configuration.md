@@ -139,23 +139,25 @@ Dropdowns use the same editable response tables, circles, indentation, label sty
   "responses": {
     "dropdown_mode": "auto",
     "dropdown_write_in_at": 50,
+    "dropdown_numeric_write_in_at": 12,
     "dropdown_max_columns": 3
   }
 }
 ```
 
-In `auto` mode, a dropdown becomes a write-in only when it reaches `dropdown_write_in_at` choices **and** its labels are not recognized as an ordered sequence. The new default threshold is 50, replacing 12. Numeric sequences, age ranges, heights with units, years/months of service, and military grade codes such as E-1/W-1/O-1 stay as choices even above that threshold. Recognition requires at least 80% of labels to form an ascending or descending numeric/unit or grade sequence, allowing a few special endpoints such as “Less than one year” or “Prefer not to answer.” Labels and source order are preserved; the converter does not sort them. Very long name lists remain write-ins. This detection is a heuristic; other ordered categories can be set explicitly.
+In `auto` mode, numeric sequences such as age, height with units, or years/months of service become write-ins at `dropdown_numeric_write_in_at` choices (12 by default). Short numeric lists remain choices. Categorical responses such as military grade codes E-1/W-1/O-1 stay as choices. Other lists, including name selectors, become write-ins at `dropdown_write_in_at` choices (50 by default, replacing 12). Numeric/grade recognition requires at least 80% of labels to form an ascending or descending sequence, allowing a few special endpoints such as “Less than one year” or “Prefer not to answer.” Labels and source order are preserved; the converter does not sort them. This detection is a heuristic; unusual categories can be set explicitly.
 
 `dropdown_mode` accepts `auto`, `choices` (always show the options), and `write_in` (always provide a write-in). It is independent of `responses.layout`, which controls the arrangement of retained choices. `dropdown_max_columns` defaults to 3 for dropdowns only; other multiple-choice lists retain `responses.max_columns` (2). The existing `multiple_columns_above` and `short_label_max_chars` settings control when columns are appropriate. Long labels and choices with accompanying text fields remain a single vertical list. Setting either column limit to 1 prevents splitting for that question type.
 
 ```bash
 python qsf_to_paper.py survey.qsf --set responses.dropdown_write_in_at=75
+python qsf_to_paper.py survey.qsf --set responses.dropdown_numeric_write_in_at=20
 python qsf_to_paper.py survey.qsf --set responses.dropdown_max_columns=2
 python qsf_to_paper.py survey.qsf --set question_overrides.QID12.responses.dropdown_mode=choices
 python qsf_logic_to_paper.py survey.qsf --set question_overrides.QID20.responses.dropdown_mode=write_in
 ```
 
-All dropdown settings support the main config, survey config, CLI `--set`, and per-question overrides. An existing config that explicitly sets `dropdown_write_in_at` to 12 retains that threshold for unordered lists; update it to 50 for the new default. To reproduce the previous count-only behavior for a particular question, set its `dropdown_mode` to `write_in`. Extremely long retained lists may require more than one printed page; conversion still preserves every choice.
+All dropdown settings support the main config, survey config, CLI `--set`, and per-question overrides. An existing config that explicitly sets `dropdown_write_in_at` to 12 retains that threshold for ordinary categorical lists; update it to 50 for the new default. Recognized grade sequences stay as choices. Numeric ranges use their separate threshold. To force a particular question to be a write-in, set its `dropdown_mode` to `write_in`; use `choices` to display any numeric or name list explicitly. Extremely long retained lists may require more than one printed page; conversion still preserves every choice.
 
 Header rotation accepts `auto`, `always`, or `never`; automatic rotation uses `rotate_at_columns`. Rotated labels are flattened to remove source line breaks, then wrapped only when needed to fit. Turning rotation off on a matrix with many narrow columns may require smaller labels or a wider page.
 
