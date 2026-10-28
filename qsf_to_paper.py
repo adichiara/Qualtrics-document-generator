@@ -1311,6 +1311,15 @@ def convert(qsf, output, text_lines=None, include_ids=False, config=None):
     return writer.number, writer.warnings
 
 
+def list_questions(qsf):
+    """Print stable QIDs, export tags, and one-line prompts without converting."""
+    data = json.loads(Path(qsf).read_text(encoding="utf-8-sig"))
+    for element in data.get("SurveyElements", []):
+        if element.get("Element") == "SQ" and isinstance(element.get("Payload"), dict):
+            q = element["Payload"]
+            print(f"{q.get('QuestionID', '')}\t{clean(q.get('DataExportTag', ''))}\t{flat(clean(q.get('QuestionText', '')))}")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("qsf", type=Path, nargs="?", help="Qualtrics .qsf export")
@@ -1353,11 +1362,7 @@ def main():
             return
         if args.qsf is None: ap.error("Provide a QSF path, or use --write-default-config PATH.")
         if args.list_questions:
-            data = json.loads(args.qsf.read_text(encoding="utf-8-sig"))
-            for element in data.get("SurveyElements", []):
-                if element.get("Element") == "SQ" and isinstance(element.get("Payload"), dict):
-                    q = element["Payload"]
-                    print(f"{q.get('QuestionID', '')}\t{clean(q.get('DataExportTag', ''))}\t{flat(clean(q.get('QuestionText', '')))}")
+            list_questions(args.qsf)
             return
         config, config_warnings = load_config_layers(args.config, args.survey_config)
         cli = {}

@@ -1,6 +1,7 @@
 """Verify instruction insertion and numbering without modifying the base formatter."""
 import hashlib
 import json
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -15,6 +16,38 @@ from test_logic import fixture, question, choice, condition
 
 
 class LogicDocumentTests(unittest.TestCase):
+    def test_list_questions_matches_formatter_without_creating_outputs(self):
+        data = fixture()
+        question(data, 1)['QuestionText'] = '<b>First question</b><br>Second line'
+        with tempfile.TemporaryDirectory() as folder:
+            folder = Path(folder)
+            qsf, output, report, invalid_config = [folder / name for name in
+                                                 ('survey.qsf', 'out.docx', 'report.json', 'invalid.json')]
+            qsf.write_text(json.dumps(data), encoding='utf-8-sig')
+            invalid_config.write_text('{invalid')
+            results = []
+            for script in ('qsf_to_paper.py', 'qsf_logic_to_paper.py'):
+                result = subprocess.run([sys.executable, str(ROOT / script), str(qsf), '--list-questions',
+                                         '--config', str(invalid_config), '-o', str(output)], capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertFalse(result.stderr)
+                self.assertFalse(output.exists())
+                results.append(result.stdout)
+            self.assertEqual(results[0], results[1])
+            rows = results[1].splitlines()
+            self.assertEqual(len(rows), 4)
+            self.assertEqual(rows[0].split('\t'), ['QID1', 'Q10', 'First question Second line'])
+            result = subprocess.run([sys.executable, str(ROOT / 'qsf_logic_to_paper.py'), str(qsf),
+                                     '--list-questions', '--report', str(report)], capture_output=True, text=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertFalse(report.exists())
+            qsf.write_text('{invalid')
+            result = subprocess.run([sys.executable, str(ROOT / 'qsf_logic_to_paper.py'), str(qsf),
+                                     '--list-questions'], capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn('Error:', result.stderr)
+            self.assertNotIn('Traceback', result.stderr)
+
     def convert(self, data, config=None):
         with tempfile.TemporaryDirectory() as folder:
             qsf = Path(folder) / 'survey.qsf'

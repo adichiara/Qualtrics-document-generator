@@ -176,8 +176,12 @@ def main():
     parser.add_argument("--numbering", choices=["sequential", "survey", "off"])
     parser.add_argument("--set", action="append", default=[], metavar="SECTION.KEY=VALUE")
     parser.add_argument("--report", type=Path, help="Save the analysis report as JSON")
+    parser.add_argument("--list-questions", action="store_true", help="List QSF question IDs, export tags, and prompts, then exit")
     args = parser.parse_args()
     try:
+        if args.list_questions:
+            formatter.list_questions(args.qsf)
+            return 0
         config, config_warnings = formatter.load_config_layers(args.config, args.survey_config)
         cli = {}
         if args.numbering:

@@ -10,7 +10,7 @@ Dropdowns retain categorical choices such as military rank grades as multiple-ch
 
 Requires Python 3.8 or newer.
 
-[Download the current code and configuration](downloads/Qualtrics-document-generator-dropdown-categories-20261028.zip).
+[Download the current code and configuration](downloads/Qualtrics-document-generator-question-list-20261028.zip).
 
 ```bash
 pip install -r requirements.txt
@@ -41,6 +41,7 @@ Settings apply in this order: built-in defaults, main config, survey config, gen
 ```bash
 python qsf_to_paper.py --help
 python qsf_to_paper.py your-survey.qsf --list-questions
+python qsf_logic_to_paper.py your-survey.qsf --list-questions
 ```
 
 ## Included examples

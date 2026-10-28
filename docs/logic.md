@@ -20,7 +20,7 @@ python qsf_logic_to_paper.py your-survey.qsf --numbering survey --set responses.
 
 The adapter uses the original converter to generate the form, then inserts instructions. Choice-specific skips are appended in the response label cell. Directions for write-in fields follow the response area; eligibility instructions precede their questions. Block eligibility precedes the first question. Technical review notes stay in the report and console.
 
-It loads the existing main and survey configs, supports `--set`, and makes routing references follow per-question numbering overrides. Its CLI contains only these core options; the original converter retains its full formatting CLI. PDF export remains a separate Word/LibreOffice operation.
+It loads the existing main and survey configs, supports `--set`, and makes routing references follow per-question numbering overrides. Use `python qsf_logic_to_paper.py survey.qsf --list-questions` to print QIDs, export tags, and prompts without generating a document or report; this matches the original converter's listing command. Its CLI contains these core options; the original converter retains its full formatting CLI. PDF export remains a separate Word/LibreOffice operation.
 
 ## Initial behavior
 

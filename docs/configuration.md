@@ -40,9 +40,10 @@ Overrides use the stable question ID, such as `QID22`, rather than its displayed
 
 ```bash
 python qsf_to_paper.py survey.qsf --list-questions
+python qsf_logic_to_paper.py survey.qsf --list-questions
 ```
 
-This list includes all question records in the export, including unused records; the converter still excludes trash questions from the document. An override referring to an absent question produces a console warning.
+Both commands print the same tab-separated list: QID, export tag, and question text. Use the first column for JSON overrides. Listing exits without generating a Word document or logic report and does not load formatting configs. This list includes all question records in the export, including unused records; the converter still excludes trash questions from the document. An override referring to an absent question produces a console warning.
 
 ## Per-question overrides
 
